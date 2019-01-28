@@ -4,3 +4,6 @@ dist
 src/**/*.js
 src/**/*.map
 src/**/*.d.ts
+
+coverage
+.nyc_output
