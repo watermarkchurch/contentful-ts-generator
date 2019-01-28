@@ -6,7 +6,8 @@
   "scripts": {
     "test": "tsc --project tsconfig.test.json && ava 'src/**/*.test.js'",
     "test-watch": "ava --watch",
-    "build": "tsc"
+    "build": "tsc",
+    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts'"
   },
   "keywords": [
     "async",
