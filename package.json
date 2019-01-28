@@ -1,0 +1,16 @@
+{
+  "name": "async-toolbox",
+  "version": "0.1.0",
+  "description": "A toolbox of utilities to help with async (promise-based) transformations",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "async",
+    "stream",
+    "monad"
+  ],
+  "author": "Gordon Burgett (gordon@gordonburgett.net)",
+  "license": "MIT"
+}
