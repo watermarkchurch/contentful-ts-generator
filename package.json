@@ -4,7 +4,8 @@
   "description": "A toolbox of utilities to help with async (promise-based) transformations",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "tsc --project tsconfig.test.json && ava 'src/**/*.test.js'",
+    "test-watch": "ava --watch",
     "build": "tsc"
   },
   "keywords": [
@@ -15,9 +16,25 @@
   "author": "Gordon Burgett (gordon@gordonburgett.net)",
   "license": "MIT",
   "devDependencies": {
+    "ava": "^1.2.0",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.2.4"
+  },
+  "ava": {
+    "files": [
+      "src/**/*.test.ts"
+    ],
+    "cache": true,
+    "failFast": true,
+    "verbose": true,
+    "compileEnhancements": false,
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
   }
 }
