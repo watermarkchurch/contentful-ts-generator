@@ -134,26 +134,3 @@ test('writes file with proper formatting', async (t) => {
   const expected = (await fs.readFile(path.join(__dirname, 'fixtures/contentful-schema.json'))).toString()
   t.deepEqual(contents, expected)
 })
-
-test('does not overwrite file if it is up to date', async (t) => {
-  const instance = new SchemaDownloader(opts)
-
-  fs.copy(path.join(__dirname, 'fixtures/contentful-schema-from-export.json'), '/tmp/db/contentful-schema.json')
-
-  await instance.downloadSchema()
-
-  const contents = (await fs.readFile('/tmp/db/contentful-schema.json')).toString()
-  const expected = (await fs.readFile(path.join(__dirname, 'fixtures/contentful-schema-from-export.json'))).toString()
-  t.deepEqual(contents, expected)
-})
-
-test('overwrites when new field is added', async (t) => {
-  const instance = new SchemaDownloader(opts)
-  fs.copy(path.join(__dirname, 'fixtures/contentful-schema-from-export.json'), '/tmp/db/contentful-schema.json')
-
-  await instance.downloadSchema()
-
-  const contents = (await fs.readFile('/tmp/db/contentful-schema.json')).toString()
-  const expected = (await fs.readFile(path.join(__dirname, 'fixtures/contentful-schema-from-export.json'))).toString()
-  t.true(contents == expected)
-})

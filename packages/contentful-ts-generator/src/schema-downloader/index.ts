@@ -43,6 +43,22 @@ export class SchemaDownloader {
   }
 
   public async downloadSchema() {
+    const {
+      contentTypes,
+      editorInterfaces,
+    } = await this.getSchemaFromSpace()
+
+    if (this.options.directory) {
+      await fs.mkdirp(this.options.directory)
+    }
+    const file = path.join(this.options.directory || '.', this.options.filename)
+    await fs.writeFile(file, JSON.stringify({
+      contentTypes,
+      editorInterfaces,
+    }, undefined, '  '))
+  }
+
+  private async getSchemaFromSpace() {
     const space = await this.semaphore.lock<any>(() =>
       this.client.getSpace(this.options.space))
     const env = await this.semaphore.lock<any>(() =>
@@ -65,14 +81,10 @@ export class SchemaDownloader {
       stripSys(ct.toPlainObject()))
       .sort(byId)
 
-    if (this.options.directory) {
-      await fs.mkdirp(this.options.directory)
-    }
-    const file = path.join(this.options.directory || '.', this.options.filename)
-    await fs.writeFile(file, JSON.stringify({
+    return {
       contentTypes,
       editorInterfaces,
-    }, undefined, '  '))
+    }
   }
 
   private requestLogger = (config: any) => {
