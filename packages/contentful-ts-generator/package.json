@@ -5,10 +5,8 @@
   "main": "index.js",
   "scripts": {
     "lint": "tslint 'src/**/*.ts'",
-    "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js'",
+    "test": "tsc --project ../../tsconfig.test.json && nyc ava 'src/**/*.test.js'",
     "test-watch": "ava --watch",
-    "coverage": "npm run test && nyc report --reporter=html && open coverage/index.html",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "build": "tsc",
     "prepare": "npm run build",
     "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts'"
