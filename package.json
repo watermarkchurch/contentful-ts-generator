@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "A toolbox of typescript generators",
   "scripts": {
-    "lint": "tslint 'packages/*/src/**/*.ts'",
+    "lint": "tslint --project tsconfig.json 'packages/*/src/**/*.ts'",
+    "fix": "tslint --project tsconfig.json 'packages/*/src/**/*.ts' --fix",
     "test": "tsc --project tsconfig.test.json && nyc ava 'packages/*/src/**/*.test.js'",
     "test-watch": "ava --watch",
     "coverage": "npm run test && nyc report --reporter=html && open coverage/index.html",
@@ -12,8 +13,7 @@
     "prepare": "npm run build",
     "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm packages/*/src/**/*.js packages/*/src/**/*.map packages/*/src/**/*.d.ts'"
   },
-  "keywords": [
-  ],
+  "keywords": [],
   "author": "Gordon Burgett (gordon@gordonburgett.net)",
   "license": "MIT",
   "devDependencies": {
@@ -23,6 +23,7 @@
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "tslint-eslint-rules": "^5.4.0",
+    "tslint-eslint-rules-recommended": "^1.2.0",
     "typescript": "^3.2.4"
   },
   "ava": {

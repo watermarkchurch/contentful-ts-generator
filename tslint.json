@@ -1,14 +1,22 @@
 {
   "extends": [
     "tslint:recommended",
-    "tslint-eslint-rules"
+    "tslint-eslint-rules",
+    "tslint-eslint-rules-recommended"
   ],
   "rules": {
     "semicolon": [true, "never"],
     "quotemark": [true, "single"],
     "triple-equals": false,
     "no-var-requires": false,
-    "object-literal-sort-keys": false
+    "object-literal-sort-keys": false,
+    "no-floating-promises": true,
+    "promise-function-async": true,
+    "await-promise": true,
+    "no-return-await": true,
+    "no-inferred-empty-object-type": true,
+    "match-default-export-name": true,
+    "no-unused-variable": false
   },
   "linterOptions": {
     "exclude": [

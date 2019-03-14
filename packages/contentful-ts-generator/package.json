@@ -4,7 +4,6 @@
   "description": "A toolbox of utilities to help with async (promise-based) transformations",
   "main": "index.js",
   "scripts": {
-    "lint": "tslint 'src/**/*.ts'",
     "test": "tsc --project ../../tsconfig.test.json && nyc ava 'src/**/*.test.js'",
     "test-watch": "ava --watch",
     "build": "tsc",
