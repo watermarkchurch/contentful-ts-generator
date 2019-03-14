@@ -1,18 +1,22 @@
 {
-  "name": "x-ts-generator",
-  "version": "0.0.0",
-  "description": "A toolbox of typescript generators",
+  "name": "async-toolbox",
+  "version": "0.1.0",
+  "description": "A toolbox of utilities to help with async (promise-based) transformations",
+  "main": "index.js",
   "scripts": {
-    "lint": "tslint 'packages/*/src/**/*.ts'",
-    "test": "tsc --project tsconfig.test.json && nyc ava 'packages/*/src/**/*.test.js'",
+    "lint": "tslint 'src/**/*.ts'",
+    "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js'",
     "test-watch": "ava --watch",
     "coverage": "npm run test && nyc report --reporter=html && open coverage/index.html",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "build": "tsc",
     "prepare": "npm run build",
-    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm packages/*/src/**/*.js packages/*/src/**/*.map packages/*/src/**/*.d.ts'"
+    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts'"
   },
   "keywords": [
+    "async",
+    "stream",
+    "monad"
   ],
   "author": "Gordon Burgett (gordon@gordonburgett.net)",
   "license": "MIT",
@@ -27,7 +31,7 @@
   },
   "ava": {
     "files": [
-      "packages/*/src/**/*.test.ts"
+      "src/**/*.test.ts"
     ],
     "cache": true,
     "failFast": true,

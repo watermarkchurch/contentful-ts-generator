@@ -1,19 +1,17 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "outDir": "dist",
     "noImplicitAny": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
+    "strict": true,
     "sourceMap": true,
     "lib": [
       "es2015"
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "packages/*/src/**/*.ts"
   ],
   "exclude": [
-    "src/**/*.test.ts"
+    "packages/*/src/**/*.test.ts"
   ]
 }
