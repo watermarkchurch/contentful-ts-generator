@@ -17,6 +17,7 @@
   "author": "Gordon Burgett (gordon@gordonburgett.net)",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^11.11.3",
     "ava": "^1.2.0",
     "coveralls": "^3.0.2",
     "nyc": "^13.1.0",

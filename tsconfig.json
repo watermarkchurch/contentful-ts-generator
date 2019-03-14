@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "*": ["types/*"] },
     "declaration": true,
     "noImplicitAny": true,
     "strict": true,
     "sourceMap": true,
     "lib": [
       "es2015"
+    ],
+    "types": [
+      "node"
     ]
   },
   "include": [

@@ -1,5 +1,5 @@
 {
-  "name": "async-toolbox",
+  "name": "contentful-ts-generator",
   "version": "0.1.0",
   "description": "A toolbox of utilities to help with async (promise-based) transformations",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "test-watch": "ava --watch",
     "build": "tsc",
     "prepare": "npm run build",
-    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts'"
+    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts'; true"
   },
   "keywords": [
     "async",
@@ -18,8 +18,12 @@
   "author": "Gordon Burgett (gordon@gordonburgett.net)",
   "license": "MIT",
   "devDependencies": {
+    "@types/fs-extra": "^5.0.5",
+    "@types/nock": "^9.3.1",
+    "@types/node": "^11.11.3",
     "ava": "^1.2.0",
     "coveralls": "^3.0.2",
+    "nock": "^10.0.6",
     "nyc": "^13.1.0",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
@@ -40,5 +44,10 @@
     "require": [
       "ts-node/register"
     ]
+  },
+  "dependencies": {
+    "async-toolbox": "^0.2.4",
+    "contentful-management": "^5.7.0",
+    "fs-extra": "^7.0.1"
   }
 }
