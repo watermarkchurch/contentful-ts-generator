@@ -3,6 +3,7 @@ import * as inflection from 'inflection'
 import * as path from 'path'
 import { FunctionDeclarationOverloadStructure, Project, PropertySignatureStructure } from 'ts-morph'
 import { Compiler } from 'webpack'
+import { ContentTypeWriter } from './content-type-writer'
 
 interface Options {
   schemaFile: string
@@ -87,8 +88,10 @@ export class ContentfulTSGenerator {
     schema.contentTypes.forEach((ct: any) => {
       const fileName = idToFilename(ct.sys.id)
 
-      const writer = new ContentTypeWriter(ct, project)
-      writer.write(path.join(path.resolve(options.outputDir), fileName + '.ts'))
+      const fullPath = path.join(path.resolve(options.outputDir), fileName + '.ts')
+      const file = project.createSourceFile(fullPath)
+      const writer = new ContentTypeWriter(ct, file)
+      writer.write()
 
       indexFile.addExportDeclaration({
         moduleSpecifier: `./${fileName}`,
@@ -179,9 +182,10 @@ export class ContentfulTSGenerator {
       writer.writeLine('}')
     })
 
+    indexFile.saveSync()
   }
 }
 
-function idToFilename(id) {
+function idToFilename(id: string) {
   return inflection.underscore(id, false)
 }
