@@ -3,11 +3,13 @@ import * as path from 'path'
 import { Compiler } from 'webpack'
 
 import { ContentfulTSGenerator, GeneratorOptions } from './generator'
+import { Installer } from './installer'
+import { SchemaDownloader } from './schema-downloader'
 
 export interface PluginOptions extends GeneratorOptions {
   schemaFile: string
   outputDir: string
-  downloadSchema: boolean
+  downloadSchema: boolean | undefined
   space?: string
   environment?: string
   managementToken?: string
@@ -15,11 +17,12 @@ export interface PluginOptions extends GeneratorOptions {
 
 export class ContentfulTSGeneratorPlugin {
   private readonly options: Readonly<PluginOptions>
+
+  private readonly installer: Installer
   private readonly generator: ContentfulTSGenerator
 
   constructor(options?: Partial<PluginOptions>) {
     const opts = Object.assign({
-      downloadSchema: false,
       managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
       space: process.env.CONTENTFUL_SPACE_ID,
       environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
@@ -38,7 +41,13 @@ export class ContentfulTSGeneratorPlugin {
     }
 
     this.options = opts as PluginOptions
-    this.generator = new ContentfulTSGenerator(this.options)
+    this.installer = new Installer({
+      outputDir: this.options.outputDir,
+    })
+    this.generator = new ContentfulTSGenerator({
+      schemaFile: this.options.schemaFile,
+      outputDir: path.join(this.options.outputDir, 'generated'),
+    })
   }
 
   public apply = (compiler: Compiler) => {
@@ -52,15 +61,30 @@ export class ContentfulTSGeneratorPlugin {
     const options = this.options
     const indexFileName = path.join(path.resolve(options.outputDir), 'index.ts')
 
-    if (fs.existsSync(indexFileName)) {
+    if (this.options.downloadSchema) {
+      await this.downloader().downloadSchema()
+    } else if (fs.existsSync(indexFileName)) {
       const o = fs.statSync(indexFileName)
       const s = fs.statSync(options.schemaFile)
       if (s.mtime < o.mtime) {
         console.log(`${options.schemaFile} not modified, skipping generation`)
         return
       }
+    } else if (typeof(this.options.downloadSchema) == 'undefined') {
+      await this.downloader().downloadSchema()
     }
 
-    await this.generator.generate()
+    await Promise.all([
+      this.installer.install(),
+      this.generator.generate(),
+    ])
+  }
+
+  private downloader() {
+    return new SchemaDownloader({
+      ...this.options,
+      directory: path.dirname(this.options.schemaFile),
+      filename: path.basename(this.options.schemaFile),
+    })
   }
 }
