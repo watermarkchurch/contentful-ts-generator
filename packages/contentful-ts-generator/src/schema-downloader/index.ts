@@ -32,13 +32,12 @@ export class SchemaDownloader {
     this.options = opts
     this.client = createClient({
       accessToken: opts.managementToken,
-      retryOnError: false,
       requestLogger: this.requestLogger,
       responseLogger: this.responseLogger,
     })
     this.semaphore = new Limiter({
       interval: 'second',
-      tokensPerInterval: 10,
+      tokensPerInterval: 4,
     })
   }
 

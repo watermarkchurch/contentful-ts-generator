@@ -27,9 +27,9 @@ export class ContentfulTSGenerator {
 
     if (!opts.outputDir) {
       if (fs.statSync('app/assets/javascripts')) {
-        opts.outputDir = 'app/assets/javascripts/lib/contentful'
+        opts.outputDir = 'app/assets/javascripts/lib/contentful/generated'
       } else {
-        opts.outputDir = 'lib/contentful'
+        opts.outputDir = 'lib/contentful/generated'
       }
     }
 
@@ -38,17 +38,16 @@ export class ContentfulTSGenerator {
 
   public generate = async () => {
     const options = this.options
+    console.log('generating with options', options)
     const indexFileName = path.join(path.resolve(options.outputDir), 'index.ts')
 
-    const schema = JSON.parse(await fs.readFile(options.schemaFile).toString())
+    const schemaContents = (await fs.readFile(options.schemaFile))
+    const schema = JSON.parse(schemaContents.toString())
 
     await fs.mkdirp(options.outputDir)
-    if (await fs.pathExists(indexFileName)) {
-      await fs.truncate(indexFileName)
-    }
 
     const project = new Project()
-    const indexFile = project.addExistingSourceFileIfExists(indexFileName) || project.createSourceFile(indexFileName)
+    const indexFile = project.createSourceFile(indexFileName, undefined, {overwrite: true})
 
     const typeDirectory = {} as { [id: string]: string }
     const fieldsDirectory = {} as { [id: string]: string }
@@ -57,7 +56,9 @@ export class ContentfulTSGenerator {
       const fileName = idToFilename(ct.sys.id)
 
       const fullPath = path.join(path.resolve(options.outputDir), fileName + '.ts')
-      const file = project.createSourceFile(fullPath)
+      const file = project.createSourceFile(fullPath, undefined, {
+        overwrite: true,
+      })
       const writer = new ContentTypeWriter(ct, file)
       await writer.write()
 
@@ -87,7 +88,7 @@ export class ContentfulTSGenerator {
       isExported: true,
       properties: Object.keys(typeDirectory).map<PropertySignatureStructure>((ct: any) => (
         {
-          name: ct,
+          name: `'${ct}'`,
           type: `C.${typeDirectory[ct]}`,
         }
       )),
@@ -98,7 +99,7 @@ export class ContentfulTSGenerator {
       isExported: true,
       properties: Object.keys(classDirectory).map<PropertySignatureStructure>((ct: any) => (
         {
-          name: ct,
+          name: `'${ct}'`,
           type: `C.${classDirectory[ct]}`,
         }
       )),
@@ -129,25 +130,25 @@ export class ContentfulTSGenerator {
     // export function wrap(entry: IEntry<any>): IEntry<any>
     const wrapFn = indexFile.addFunction({
       name: 'wrap',
+      isExported: true,
       parameters: [{
         name: 'entry',
         type: 'IEntry<any>',
       }],
       returnType: 'IEntry<any>',
       overloads: wrapOverloads,
-    })
+      bodyText: (writer) => {
+        writer.writeLine('const id = entry.sys.contentType.sys.id')
+          .writeLine('switch(id) {')
 
-    wrapFn.setBodyText((writer) => {
-      writer.writeLine('const id = entry.sys.contentType.sys.id')
-        .writeLine('switch(id) {')
-
-      Object.keys(classDirectory).map((ct) => {
-        writer.writeLine(`case '${ct}':`)
-          .writeLine(`return new C.${classDirectory[ct]}(entry)`)
-      })
-      writer.writeLine('default:')
-      writer.writeLine('throw new Error(\'Unknown content type:\' + id)')
-      writer.writeLine('}')
+        Object.keys(classDirectory).map((ct) => {
+          writer.writeLine(`case '${ct}':`)
+            .writeLine(`return new C.${classDirectory[ct]}(entry)`)
+        })
+        writer.writeLine('default:')
+        writer.writeLine('throw new Error(\'Unknown content type:\' + id)')
+        writer.writeLine('}')
+      },
     })
 
     await indexFile.save()

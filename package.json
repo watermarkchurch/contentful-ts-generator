@@ -18,6 +18,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^11.11.3",
+    "@types/yargs": "^12.0.9",
     "ava": "^1.2.0",
     "coveralls": "^3.0.2",
     "nyc": "^13.1.0",
@@ -41,5 +42,8 @@
     "require": [
       "ts-node/register"
     ]
+  },
+  "dependencies": {
+    "yargs": "^13.2.2"
   }
 }

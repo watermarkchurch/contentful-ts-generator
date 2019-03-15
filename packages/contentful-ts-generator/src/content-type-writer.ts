@@ -60,10 +60,11 @@ export class ContentTypeWriter {
     file.addInterface({
       name: this.interfaceName,
       isExported: true,
-      docs: [
+      docs: [[
         contentType.name,
-        contentType.description ? contentType.description : '',
-      ],
+        contentType.description && '',
+        contentType.description && contentType.description,
+      ].filter(exists).join('\n')],
       extends: [`IEntry<${this.fieldsName}>`],
     })
 
@@ -80,12 +81,13 @@ export class ContentTypeWriter {
           .writeLine('entry.sys &&')
           .writeLine('entry.sys.contentType &&')
           .writeLine('entry.sys.contentType.sys &&')
-          .writeLine(`entry.sys.contentType.sys.id == ${contentType.sys.id}`)
+          .writeLine(`entry.sys.contentType.sys.id == '${contentType.sys.id}'`)
       },
     })
 
     const klass = file.addClass({
       name: this.className,
+      isExported: true,
       implements: [this.interfaceName],
       properties: [
         { name: 'sys', isReadonly: true, scope: Scope.Public, type: `ISys<'Entry'>` },
@@ -110,27 +112,27 @@ export class ContentTypeWriter {
         { parameters: [{ name: 'id', type: 'string' }, { name: 'fields', type: this.fieldsName }] },
       ],
       bodyText: `
-      if (typeof entryOrId == 'string') {
-        if (!fields) {
-          throw new Error('No fields provided')
-        }
+if (typeof entryOrId == 'string') {
+  if (!fields) {
+    throw new Error('No fields provided')
+  }
 
-        this.sys = {
-          id: entryOrId,
-          type: 'Entry',
-          space: null,
-          contentType: {
-            sys: {
-              type: 'Link',
-              linkType: 'ContentType',
-              id: '${contentType.sys.id}'
-            }
-          }
-        }
-        this.fields = fields
-      } else {
-        Object.assign(this, entryOrId)
-      }`,
+  this.sys = {
+    id: entryOrId,
+    type: 'Entry',
+    space: null,
+    contentType: {
+      sys: {
+        type: 'Link',
+        linkType: 'ContentType',
+        id: '${contentType.sys.id}'
+      }
+    }
+  }
+  this.fields = fields
+} else {
+  Object.assign(this, entryOrId)
+}`,
     })
 
     await file.save()
@@ -259,12 +261,14 @@ export class ContentTypeWriter {
         if (!this.file.getTypeAlias(unionName)) {
           this.file.addTypeAlias({
             name: unionName,
-            type: validation.linkContentType.map((v: any) => 'I' + idToName(v)),
+            isExported: true,
+            type: validation.linkContentType.map((v: any) => 'I' + idToName(v)).join(' | '),
           })
 
           this.file.addTypeAlias({
             name: unionName + 'Class',
-            type: validation.linkContentType.map((v: any) => idToName(v)),
+            isExported: true,
+            type: validation.linkContentType.map((v: any) => idToName(v)).join(' | '),
           })
         }
         return unionName
@@ -281,7 +285,8 @@ export class ContentTypeWriter {
         if (!this.file.getTypeAlias(name)) {
           this.file.addTypeAlias({
             name,
-            type: validation.in.map((val: any) => dump(val)),
+            isExported: true,
+            type: validation.in.map((val: any) => dump(val)).join(' | '),
           })
         }
 
@@ -312,4 +317,8 @@ function dump(obj: any) {
     maxArrayLength: null,
     breakLength: 0,
   })
+}
+
+function exists(val: any): boolean {
+  return !!val
 }
