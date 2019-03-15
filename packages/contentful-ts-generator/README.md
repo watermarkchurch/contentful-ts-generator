@@ -1,5 +1,9 @@
 # contentful-ts-generator
 
+[![npm version](https://badge.fury.io/js/contentful-ts-generator.svg)](https://badge.fury.io/js/contentful-ts-generator)
+[![Build Status](https://travis-ci.org/gburgett/ts-generators.svg?branch=master)](https://travis-ci.org/gburgett/ts-generators)
+[![Coverage Status](https://coveralls.io/repos/github/gburgett/ts-generators/badge.svg?branch=master)](https://coveralls.io/github/gburgett/ts-generators?branch=master)
+
 A CLI & webpack plugin for automatically generating Typescript code based on the
 content types in your Contentful space.
 
