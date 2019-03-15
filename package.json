@@ -7,7 +7,7 @@
     "fix": "tslint --project tsconfig.json 'packages/*/src/**/*.ts' --fix",
     "install": "bash -c 'for f in packages/*/package.json; do pushd `dirname \"$f\"` && npm install && popd; done'",
     "test": "bash -c 'for f in packages/*/package.json; do pushd `dirname \"$f\"` && npm run test && popd; done'",
-    "coveralls": "bash -c 'for f in packages/*/package.json; do pushd `dirname \"$f\"` && npm run coveralls && popd; done'",
+    "coveralls": "bash -c 'for f in packages/*/package.json; do pushd `dirname \"$f\"` && nyc report --reporter=text-lcov && popd; done' | coveralls",
     "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm packages/*/src/**/*.js packages/*/src/**/*.map packages/*/src/**/*.d.ts'"
   },
   "homepage": "https://github.com/gburgett/ts-generators",
