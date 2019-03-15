@@ -7,11 +7,17 @@ import { Installer } from './installer'
 import { SchemaDownloader } from './schema-downloader'
 
 export interface IPluginOptions extends IGeneratorOptions {
+  /** The location on disk of the schema file. */
   schemaFile: string
+  /** Where to place the generated code. */
   outputDir: string
+  /** Whether to download the schema file from the Contentful space first */
   downloadSchema: boolean | undefined
+  /** The Contentful space ID. Defaults to the env var CONTENTFUL_SPACE_ID */
   space?: string
+  /** The Contentful environment.  Defaults to the env var CONTENTFUL_ENVIRONMENT or \'master\' */
   environment?: string
+  /** The Contentful management token.  Defaults to the env var CONTENTFUL_MANAGEMENT_TOKEN */
   managementToken?: string
 
   logger: {

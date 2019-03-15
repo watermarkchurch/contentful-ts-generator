@@ -25,6 +25,7 @@
     "@types/node": "^11.11.3",
     "@types/tmp": "0.0.34",
     "@types/webpack": "^4.4.25",
+    "@types/yargs": "^12.0.9",
     "ava": "^1.2.0",
     "coveralls": "^3.0.2",
     "nock": "^10.0.6",

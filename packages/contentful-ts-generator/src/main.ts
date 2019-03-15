@@ -25,6 +25,33 @@ interface ILogger {
   debug: Console['debug'],
 }
 
+yargs
+  .option('file', {
+    alias: 'f',
+    describe: 'The location on disk of the schema file.',
+  })
+  .option('out', {
+    alias: 'o',
+    describe: 'Where to place the generated code.',
+  })
+  .option('download', {
+    boolean: true,
+    alias: 'd',
+    describe: 'Whether to download the schema file from the Contentful space first',
+  })
+  .option('managementToken', {
+    alias: 'm',
+    describe: 'The Contentful management token.  Defaults to the env var CONTENTFUL_MANAGEMENT_TOKEN',
+  })
+  .option('space', {
+    alias: 's',
+    describe: 'The Contentful space ID. Defaults to the env var CONTENTFUL_SPACE_ID',
+  })
+  .option('environment', {
+    alias: 'e',
+    describe: 'The Contentful environment.  Defaults to the env var CONTENTFUL_ENVIRONMENT or \'master\'',
+  })
+
 // tslint:disable-next-line:no-shadowed-variable
 async function Run(args: IArgv, logger: ILogger = console) {
   if (args.download) {
