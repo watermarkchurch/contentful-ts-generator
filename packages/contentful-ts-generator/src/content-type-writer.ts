@@ -90,8 +90,8 @@ export class ContentTypeWriter {
       isExported: true,
       implements: [this.interfaceName],
       properties: [
-        { name: 'sys', isReadonly: true, scope: Scope.Public, type: `ISys<'Entry'>` },
-        { name: 'fields', isReadonly: true, scope: Scope.Public, type: this.fieldsName },
+        { name: 'sys', isReadonly: true, hasExclamationToken: true, scope: Scope.Public, type: `ISys<'Entry'>` },
+        { name: 'fields', isReadonly: true, hasExclamationToken: true, scope: Scope.Public, type: this.fieldsName },
       ],
     })
 
@@ -120,7 +120,7 @@ if (typeof entryOrId == 'string') {
   this.sys = {
     id: entryOrId,
     type: 'Entry',
-    space: null,
+    space: undefined,
     contentType: {
       sys: {
         type: 'Link',
@@ -131,6 +131,12 @@ if (typeof entryOrId == 'string') {
   }
   this.fields = fields
 } else {
+  if (typeof entryOrId.sys == 'undefined') {
+    throw new Error('Entry did not have a \`sys\`!')
+  }
+  if (typeof entryOrId.fields == 'undefined') {
+    throw new Error('Entry did not have a \`fields\`!')
+  }
   Object.assign(this, entryOrId)
 }`,
     })
@@ -175,13 +181,20 @@ if (typeof entryOrId == 'string') {
     const optionalFieldDeclaration = field.required && !field.omitted ? '' : ' | undefined'
 
     if (field.type == 'Link') {
-      accessorImpl = `return !this.fields.${field.id} ? undefined :
-      (${getLinkImpl(field, `this.fields.${field.id}`)})`
+      accessorImpl = 'return '
+      if (!field.required) {
+        accessorImpl += `!this.fields.${field.id} ? undefined :\n`
+      }
+      accessorImpl += `(${getLinkImpl(field, `this.fields.${field.id}`)})`
       returnType = `${returnType}${optionalFieldDeclaration}`
     } else if (field.type == 'Array' && field.items.type == 'Link') {
       const mapFnImpl = getLinkImpl(Object.assign({ id: field.id }, field.items), 'item')
-      accessorImpl = `return !this.fields.${field.id} ? undefined :
-      this.fields.${field.id}.map((item) =>
+      accessorImpl = 'return '
+      if (!field.required) {
+        accessorImpl += `!this.fields.${field.id} ? undefined :\n`
+      }
+
+      accessorImpl += `this.fields.${field.id}.map((item) =>
         ${mapFnImpl}
       )`
 

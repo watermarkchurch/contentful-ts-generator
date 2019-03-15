@@ -1,0 +1,297 @@
+{
+  "contentTypes": [
+    {
+      "sys": {
+        "id": "menu",
+        "type": "ContentType"
+      },
+      "displayField": "name",
+      "name": "Menu",
+      "description": "A Menu contains...",
+      "fields": [
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "items",
+          "name": "Items",
+          "type": "Array",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "items": {
+            "type": "Link",
+            "validations": [
+              {
+                "linkContentType": [
+                  "menuButton"
+                ],
+                "message": "The Menu groups must contain only MenuButtons"
+              }
+            ],
+            "linkType": "Entry"
+          }
+        }        
+      ]
+    },
+    {
+      "sys": {
+        "id": "menuButton",
+        "type": "ContentType",
+        "contentType": null
+      },
+      "displayField": "internalTitle",
+      "name": "Menu Button",
+      "description": "A Menu Button is a clickable button that goes on a Menu.",
+      "fields": [
+        {
+          "id": "internalTitle",
+          "name": "Internal Title (Contentful Only)",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": true
+        },
+        {
+          "id": "text",
+          "name": "Text",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "size": {
+                "min": 1,
+                "max": 60
+              },
+              "message": "A Menu Button should have a very short text field."
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "icon",
+          "name": "Icon",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "linkMimetypeGroup": [
+                "image"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        },
+        {
+          "id": "externalLink",
+          "name": "External Link",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^([^\\s\\:]+):(\\/\\/)?(\\w+:{0,1}\\w*@)?(([^\\s\\/#]+\\.)+[^\\s\\/#]+)(:[0-9]+)?(\\/|(\\/|\\#)([\\w#!:.?+=&%@!\\-\\/]+))?$|^(\\/|(\\/|\\#)([\\w#!:.?+=&%@!\\-\\/]+))$"
+              },
+              "message": "The external link must be a URL like 'https://www.watermark.org/', a mailto url like 'mailto:info@watermark.org', or a relative URL like '#location-on-page'"
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "link",
+          "name": "Page Link",
+          "type": "Link",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Entry"
+        },
+        {
+          "id": "ionIcon",
+          "name": "Ion Icon",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "regexp": {
+                "pattern": "^ion-[a-z\\-]+$"
+              },
+              "message": "The icon should start with 'ion-', like 'ion-arrow-down-c'.  See http://ionicons.com/"
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "style",
+          "name": "Style",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "oval-border"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "testimonial",
+        "type": "ContentType"
+      },
+      "displayField": "name",
+      "name": "Testimonial",
+      "description": "A Testimonial contains a user's photo...",
+      "fields": [
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "photo",
+          "name": "Photo",
+          "type": "Link",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "linkMimetypeGroup": [
+                "image"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false,
+          "linkType": "Asset"
+        }
+      ]
+    }
+  ],
+  "editorInterfaces": [
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "menu",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "name",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "items",
+          "widgetId": "entryLinksEditor"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "testimonial",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "name",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "photo",
+          "widgetId": "assetLinkEditor"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "contentType": {
+          "sys": {
+            "id": "menuButton",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "text",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "icon",
+          "widgetId": "assetLinkEditor"
+        },
+        {
+          "fieldId": "externalLink",
+          "settings": {
+            "helpText": "Provide a URL to something on another website, a `mailto:` link to an email address, or a deep link into an app."
+          },
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "link",
+          "widgetId": "entryLinkEditor"
+        },
+        {
+          "fieldId": "ionIcon",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "internalTitle",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "style",
+          "widgetId": "dropdown"
+        }
+      ]
+    }
+  ]
+}
