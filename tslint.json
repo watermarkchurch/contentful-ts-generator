@@ -7,7 +7,6 @@
   "rules": {
     "semicolon": [true, "never"],
     "quotemark": [true, "single"],
-    "interface-name": [true, "never-prefix"],
     "triple-equals": false,
     "no-var-requires": false,
     "object-literal-sort-keys": false,
@@ -22,7 +21,8 @@
   "linterOptions": {
     "exclude": [
       "**/*.js",
-      "**/*.d.ts"
+      "**/*.d.ts",
+      "tmp/**/*.ts"
     ]
   }
 }
