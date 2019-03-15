@@ -2,7 +2,8 @@
   "name": "contentful-ts-generator",
   "version": "0.1.0",
   "description": "A CLI & webpack plugin for automatically generating Typescript code based on the content types in your Contentful space.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "bin": "bin/contentful-ts-generator",
   "scripts": {
     "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js'",
     "test-watch": "ava --watch",
