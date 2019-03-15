@@ -4,11 +4,11 @@
   "description": "A toolbox of utilities to help with async (promise-based) transformations",
   "main": "index.js",
   "scripts": {
-    "test": "tsc --project ../../tsconfig.test.json && nyc ava 'src/**/*.test.js'",
+    "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js'",
     "test-watch": "ava --watch",
     "build": "tsc --project tsconfig.dist.json",
-    "prepare": "npm run build",
-    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts'; true"
+    "prepare": "npm run clean && npm run build && rsync -avR src/./installer/templates dist",
+    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts; rm -rf src/**/tmp'; true"
   },
   "keywords": [
     "async",
@@ -23,6 +23,7 @@
     "@types/inflection": "^1.5.28",
     "@types/nock": "^9.3.1",
     "@types/node": "^11.11.3",
+    "@types/tmp": "0.0.34",
     "@types/webpack": "^4.4.25",
     "ava": "^1.2.0",
     "coveralls": "^3.0.2",
@@ -56,6 +57,7 @@
     "globby": "^9.1.0",
     "inflection": "^1.12.0",
     "limiter": "^1.1.4",
+    "tmp": "0.0.33",
     "ts-morph": "^1.3.0"
   }
 }

@@ -5,8 +5,7 @@
   "scripts": {
     "lint": "tslint --project tsconfig.json 'packages/*/src/**/*.ts'",
     "fix": "tslint --project tsconfig.json 'packages/*/src/**/*.ts' --fix",
-    "test": "tsc --project tsconfig.test.json && nyc ava 'packages/*/src/**/*.test.js'",
-    "test-watch": "ava --watch",
+    "test": "for f in packages/*/package.json; do pushd `dirname \"$f\"` && npm run test && popd; done",
     "coverage": "npm run test && nyc report --reporter=html && open coverage/index.html",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "build": "tsc",
