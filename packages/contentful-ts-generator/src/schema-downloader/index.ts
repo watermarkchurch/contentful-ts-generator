@@ -3,27 +3,30 @@ import {createClient} from 'contentful-management'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 
-interface Options {
+interface IOptions {
   directory: string
   filename: string
   space: string
   environment: string
   managementToken: string
+
+  logger: { debug: Console['debug'] }
 }
 
 export class SchemaDownloader {
-  private readonly options: Readonly<Options>
+  private readonly options: Readonly<IOptions>
   private readonly client: any
   private readonly semaphore: Limiter
 
-  constructor(options?: Partial<Options>) {
-    const opts: Options = Object.assign({
+  constructor(options?: Partial<IOptions>) {
+    const opts: IOptions = Object.assign({
       directory: '.',
       filename: 'contentful-schema.json',
       managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
       space: process.env.CONTENTFUL_SPACE_ID,
       environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
-    } as Options, options)
+      logger: console,
+    } as IOptions, options)
 
     if (!opts.managementToken) {
       throw new Error('No managementToken given!')
@@ -91,7 +94,7 @@ export class SchemaDownloader {
   }
 
   private responseLogger = (response: any) => {
-    console.log(response.status, response.config.url)
+    this.options.logger.debug(response.status, response.config.url)
   }
 }
 

@@ -7,7 +7,7 @@ import { ContentfulTSGenerator } from './generator'
 import { Installer } from './installer'
 import { SchemaDownloader } from './schema-downloader'
 
-interface Argv {
+interface IArgv {
   /** The schema file to load for code generation */
   file: string,
   /** The output directory in which to write the code */
@@ -19,12 +19,19 @@ interface Argv {
   environment: string
 }
 
+interface ILogger {
+  log: Console['log'],
+  error: Console['error'],
+  debug: Console['debug'],
+}
+
 // tslint:disable-next-line:no-shadowed-variable
-async function Run(args: Argv) {
+async function Run(args: IArgv, logger: ILogger = console) {
   if (args.download) {
     const downloader = new SchemaDownloader({
       directory: path.dirname(args.file),
       filename: path.basename(args.file),
+      logger,
     })
 
     await downloader.downloadSchema()
@@ -32,6 +39,7 @@ async function Run(args: Argv) {
 
   const installer = new Installer({
     outputDir: args.out,
+    logger,
   })
 
   const generator = new ContentfulTSGenerator({
@@ -45,11 +53,11 @@ async function Run(args: Argv) {
   ])
 }
 
-const args = Object.assign<Partial<Argv>, Partial<Argv>>({
+const args = Object.assign<Partial<IArgv>, Partial<IArgv>>({
   managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
   space: process.env.CONTENTFUL_SPACE_ID,
   environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
-}, yargs.argv as Partial<Argv>)
+}, yargs.argv as Partial<IArgv>)
 
 if (!args.file) {
   if (fs.statSync('db').isDirectory()) {
@@ -75,6 +83,14 @@ if (typeof (args.download) == 'undefined') {
   args.download = args.download == 'true'
 }
 
-Run(args as Argv)
+// tslint:disable:no-console
+
+const logger = {
+  error: console.error,
+  log: console.log,
+  debug: () => undefined,
+}
+
+Run(args as IArgv, logger)
   .catch((err) =>
     console.error(chalk.red('An unexpected error occurred!'), err))

@@ -17,15 +17,15 @@ const formatSettings: FormatCodeSettings = {
   tabSize: 2,
 }
 
-export interface GeneratorOptions {
+export interface IGeneratorOptions {
   schemaFile: string
   outputDir: string
 }
 
 export class ContentfulTSGenerator {
-  private readonly options: Readonly<GeneratorOptions>
+  private readonly options: Readonly<IGeneratorOptions>
 
-  constructor(options?: Partial<GeneratorOptions>) {
+  constructor(options?: Partial<IGeneratorOptions>) {
     const opts = Object.assign({
 
     }, options)
@@ -46,7 +46,7 @@ export class ContentfulTSGenerator {
       }
     }
 
-    this.options = opts as GeneratorOptions
+    this.options = opts as IGeneratorOptions
   }
 
   public generate = async () => {
@@ -72,7 +72,7 @@ export class ContentfulTSGenerator {
         overwrite: true,
       })
       const writer = new ContentTypeWriter(ct, file)
-      await writer.write()
+      writer.write()
 
       file.organizeImports()
       file.formatText(formatSettings)

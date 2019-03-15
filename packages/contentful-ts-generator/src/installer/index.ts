@@ -4,6 +4,8 @@ import * as path from 'path'
 
 interface IInstallerOptions {
   outputDir: string
+
+  logger: { debug: Console['debug'] }
 }
 
 const templateDir = path.join(__dirname, 'templates')
@@ -13,7 +15,7 @@ export class Installer {
 
   constructor(options?: Partial<IInstallerOptions>) {
     const opts = Object.assign({
-
+      logger: console,
     }, options)
 
     if (!opts.outputDir) {
@@ -42,7 +44,7 @@ export class Installer {
       return
     }
 
-    console.log('install file', relPath, 'to', outPath)
+    this.options.logger.debug('install file', relPath, 'to', outPath)
     await fs.copy(file, outPath)
   }
 }

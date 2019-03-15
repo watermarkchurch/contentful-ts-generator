@@ -1,3 +1,3 @@
 
-export {ContentfulTSGenerator, GeneratorOptions} from './generator'
-export {ContentfulTSGeneratorPlugin, PluginOptions} from './plugin'
+export {ContentfulTSGenerator, IGeneratorOptions} from './generator'
+export {ContentfulTSGeneratorPlugin, IPluginOptions} from './plugin'

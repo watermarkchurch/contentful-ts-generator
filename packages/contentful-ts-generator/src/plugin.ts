@@ -2,30 +2,36 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import { Compiler } from 'webpack'
 
-import { ContentfulTSGenerator, GeneratorOptions } from './generator'
+import { ContentfulTSGenerator, IGeneratorOptions } from './generator'
 import { Installer } from './installer'
 import { SchemaDownloader } from './schema-downloader'
 
-export interface PluginOptions extends GeneratorOptions {
+export interface IPluginOptions extends IGeneratorOptions {
   schemaFile: string
   outputDir: string
   downloadSchema: boolean | undefined
   space?: string
   environment?: string
   managementToken?: string
+
+  logger: {
+    log: Console['log'],
+    debug: Console['debug'],
+  }
 }
 
 export class ContentfulTSGeneratorPlugin {
-  private readonly options: Readonly<PluginOptions>
+  private readonly options: Readonly<IPluginOptions>
 
   private readonly installer: Installer
   private readonly generator: ContentfulTSGenerator
 
-  constructor(options?: Partial<PluginOptions>) {
+  constructor(options?: Partial<IPluginOptions>) {
     const opts = Object.assign({
       managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
       space: process.env.CONTENTFUL_SPACE_ID,
       environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
+      logger: console,
     }, options)
 
     if (opts.downloadSchema) {
@@ -40,7 +46,7 @@ export class ContentfulTSGeneratorPlugin {
       }
     }
 
-    this.options = opts as PluginOptions
+    this.options = opts as IPluginOptions
     this.installer = new Installer({
       outputDir: this.options.outputDir,
     })
@@ -53,7 +59,7 @@ export class ContentfulTSGeneratorPlugin {
   public apply = (compiler: Compiler) => {
     const self = this
     compiler.hooks.run.tapPromise('ContentfulTSGenerator', async () => {
-      self.compile()
+      await self.compile()
     })
   }
 
@@ -67,7 +73,7 @@ export class ContentfulTSGeneratorPlugin {
       const o = fs.statSync(indexFileName)
       const s = fs.statSync(options.schemaFile)
       if (s.mtime < o.mtime) {
-        console.log(`${options.schemaFile} not modified, skipping generation`)
+        this.options.logger.log(`${options.schemaFile} not modified, skipping generation`)
         return
       }
     } else if (typeof(this.options.downloadSchema) == 'undefined') {
