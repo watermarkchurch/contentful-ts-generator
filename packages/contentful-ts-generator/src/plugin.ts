@@ -2,6 +2,7 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import { Compiler } from 'webpack'
 
+import { callbackify } from 'util'
 import { ContentfulTSGenerator, IGeneratorOptions } from './generator'
 import { Installer } from './installer'
 import { SchemaDownloader } from './schema-downloader'
@@ -80,9 +81,16 @@ export class ContentfulTSGeneratorPlugin {
 
   public apply = (compiler: Compiler) => {
     const self = this
-    compiler.hooks.run.tapPromise('ContentfulTSGenerator', async () => {
-      await self.compile()
-    })
+    if (compiler.hooks) {
+      compiler.hooks.run.tapPromise('ContentfulTSGenerator', async () => {
+        await self.compile()
+      })
+    } else {
+      // webpack v2
+      compiler.plugin('run', (compilation, callback) => {
+        callbackify(() => this.compile())(callback)
+      })
+    }
   }
 
   public compile = async () => {
