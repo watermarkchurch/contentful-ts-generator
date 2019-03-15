@@ -63,9 +63,9 @@ export class ContentfulTSGeneratorPlugin {
 
     if (!opts.outputDir) {
       if (fs.statSync('app/assets/javascripts')) {
-        opts.outputDir = 'app/assets/javascripts/lib/contentful/generated'
+        opts.outputDir = 'app/assets/javascripts/lib/contentful'
       } else {
-        opts.outputDir = 'lib/contentful/generated'
+        opts.outputDir = 'lib/contentful'
       }
     }
 
