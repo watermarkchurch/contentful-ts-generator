@@ -1,7 +1,7 @@
 {
   "name": "contentful-ts-generator",
   "version": "0.1.0",
-  "description": "A toolbox of utilities to help with async (promise-based) transformations",
+  "description": "A CLI & webpack plugin for automatically generating Typescript code based on the content types in your Contentful space.",
   "main": "index.js",
   "scripts": {
     "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js'",
@@ -11,9 +11,9 @@
     "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts; rm -rf src/**/tmp'; true"
   },
   "keywords": [
-    "async",
-    "stream",
-    "monad"
+    "contentful",
+    "typescript",
+    "codegen"
   ],
   "author": "Gordon Burgett (gordon@gordonburgett.net)",
   "license": "MIT",
