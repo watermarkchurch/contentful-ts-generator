@@ -52,6 +52,22 @@ export class ContentfulTSGeneratorPlugin {
       }
     }
 
+    if (!opts.schemaFile) {
+      if (fs.statSync('db').isDirectory()) {
+        opts.schemaFile = 'db/contentful-schema.json'
+      } else {
+        opts.schemaFile = 'contentful-schema.json'
+      }
+    }
+
+    if (!opts.outputDir) {
+      if (fs.statSync('app/assets/javascripts')) {
+        opts.outputDir = 'app/assets/javascripts/lib/contentful/generated'
+      } else {
+        opts.outputDir = 'lib/contentful/generated'
+      }
+    }
+
     this.options = opts as IPluginOptions
     this.installer = new Installer({
       outputDir: this.options.outputDir,
