@@ -1,18 +1,24 @@
-import test, { before } from 'ava'
+import test, { beforeEach, ExecutionContext } from 'ava'
 import * as fs from 'fs-extra'
 import * as path from 'path'
+import * as tmp from 'tmp'
+import { promisify } from 'util'
 
 import { Installer } from './index'
 
-const tmpDir = path.join(__dirname, 'tmp/integration')
 const templateDir = path.join(__dirname, 'templates')
 
-before(async (t) => {
+beforeEach(async (t) => {
+  const tmpDir = await (promisify<string>((cb) => tmp.dir(cb))())
+
+  Object.assign(t.context, { tmpDir })
   await fs.remove(tmpDir)
   await fs.mkdirp(tmpDir)
 })
 
 test('installs templates to empty directory', async (t) => {
+  const { tmpDir } = (t.context as any)
+
   const installer = new Installer({
     outputDir: tmpDir,
   })
@@ -33,6 +39,8 @@ test('installs templates to empty directory', async (t) => {
 })
 
 test('does not overwrite existing files in the directory', async (t) => {
+  const { tmpDir } = (t.context as any)
+
   const installer = new Installer({
     outputDir: tmpDir,
   })
