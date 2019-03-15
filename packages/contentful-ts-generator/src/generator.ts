@@ -1,8 +1,21 @@
 import * as fs from 'fs-extra'
 import * as inflection from 'inflection'
 import * as path from 'path'
-import { FunctionDeclarationOverloadStructure, Project, PropertySignatureStructure } from 'ts-morph'
+import {
+  FormatCodeSettings,
+  FunctionDeclarationOverloadStructure,
+  Project,
+  PropertySignatureStructure,
+} from 'ts-morph'
+
 import { ContentTypeWriter } from './content-type-writer'
+
+const formatSettings: FormatCodeSettings = {
+  convertTabsToSpaces: true,
+  ensureNewLineAtEndOfFile: true,
+  indentSize: 2,
+  tabSize: 2,
+}
 
 export interface GeneratorOptions {
   schemaFile: string
@@ -38,7 +51,6 @@ export class ContentfulTSGenerator {
 
   public generate = async () => {
     const options = this.options
-    console.log('generating with options', options)
     const indexFileName = path.join(path.resolve(options.outputDir), 'index.ts')
 
     const schemaContents = (await fs.readFile(options.schemaFile))
@@ -61,6 +73,10 @@ export class ContentfulTSGenerator {
       })
       const writer = new ContentTypeWriter(ct, file)
       await writer.write()
+
+      file.organizeImports()
+      file.formatText(formatSettings)
+      await file.save()
 
       // export * from './${fileName}
       indexFile.addExportDeclaration({
@@ -128,7 +144,7 @@ export class ContentfulTSGenerator {
     })
 
     // export function wrap(entry: IEntry<any>): IEntry<any>
-    const wrapFn = indexFile.addFunction({
+    indexFile.addFunction({
       name: 'wrap',
       isExported: true,
       parameters: [{
@@ -151,6 +167,7 @@ export class ContentfulTSGenerator {
       },
     })
 
+    indexFile.formatText(formatSettings)
     await indexFile.save()
   }
 }
