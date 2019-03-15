@@ -18,7 +18,7 @@ export class ContentTypeWriter {
     this.fieldsName = `I${name}Fields`
   }
 
-  public write() {
+  public write = async () => {
     const contentType = this.contentType
     const file = this.file
 
@@ -132,6 +132,8 @@ export class ContentTypeWriter {
         Object.assign(this, entryOrId)
       }`,
     })
+
+    await file.save()
   }
 
   public writeField(field: any, fieldsInterface: InterfaceDeclaration) {
