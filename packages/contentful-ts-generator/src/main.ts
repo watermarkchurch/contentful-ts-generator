@@ -4,6 +4,7 @@ import * as path from 'path'
 import * as yargs from 'yargs'
 
 import { ContentfulTSGenerator } from './generator'
+import { Installer } from './installer'
 import { SchemaDownloader } from './schema-downloader'
 
 interface Argv {
@@ -29,12 +30,19 @@ async function Run(args: Argv) {
     await downloader.downloadSchema()
   }
 
+  const installer = new Installer({
+    outputDir: args.out,
+  })
+
   const generator = new ContentfulTSGenerator({
     outputDir: path.join(args.out, 'generated'),
     schemaFile: args.file,
   })
 
-  await generator.generate()
+  await Promise.all([
+    installer.install(),
+    generator.generate(),
+  ])
 }
 
 const args = Object.assign<Partial<Argv>, Partial<Argv>>({
