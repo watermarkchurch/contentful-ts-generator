@@ -179,7 +179,7 @@ export class ContentTypeWriter {
 
     const fieldId = ['fields', 'sys'].indexOf(field.id) >= 0 ?
       // section-contact-us has a field named 'fields'
-      field.id + '_f' :
+      field.id + '_get' :
       field.id
     const underscored = inflection.underscore(fieldId)
 
