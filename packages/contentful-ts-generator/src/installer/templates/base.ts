@@ -7,6 +7,44 @@ export interface IEntry<TFields extends JsonObject> {
   fields: TFields
 }
 
+export class Entry<TFields extends JsonObject> implements IEntry<TFields> {
+  public readonly sys!: ISys<'Entry'>
+  public readonly fields!: TFields
+
+  protected constructor(entryOrId: IEntry<TFields> | string, contentType?: string, fields?: TFields) {
+    if (typeof entryOrId == 'string') {
+      if (!fields) {
+        throw new Error('No fields provided')
+      }
+      if (!contentType) {
+        throw new Error('No contentType provided')
+      }
+
+      this.sys = {
+        id: entryOrId,
+        type: 'Entry',
+        space: undefined,
+        contentType: {
+          sys: {
+            type: 'Link',
+            linkType: 'ContentType',
+            id: contentType,
+          },
+        },
+      }
+      this.fields = fields
+    } else {
+      if (typeof entryOrId.sys == 'undefined') {
+        throw new Error('Entry did not have a `sys`!')
+      }
+      if (typeof entryOrId.fields == 'undefined') {
+        throw new Error('Entry did not have a `fields`!')
+      }
+      Object.assign(this, entryOrId)
+    }
+  }
+}
+
 /**
  * Checks whether the given object is a Contentful entry
  * @param obj

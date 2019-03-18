@@ -24,7 +24,7 @@ export class ContentTypeWriter {
 
     file.addImportDeclaration({
       moduleSpecifier: '../base',
-      namedImports: ['Asset', 'IAsset', 'IEntry', 'ILink', 'ISys', 'isAsset', 'isEntry'],
+      namedImports: ['Asset', 'IAsset', 'Entry', 'IEntry', 'ILink', 'ISys', 'isAsset', 'isEntry'],
     })
     file.addImportDeclaration({
       moduleSpecifier: '.',
@@ -88,6 +88,7 @@ export class ContentTypeWriter {
     const klass = file.addClass({
       name: this.className,
       isExported: true,
+      extends: `Entry<${this.fieldsName}>`,
       implements: [this.interfaceName],
       properties: [
         { name: 'sys', isReadonly: true, hasExclamationToken: true, scope: Scope.Public, type: `ISys<'Entry'>` },
@@ -111,34 +112,7 @@ export class ContentTypeWriter {
         { parameters: [{ name: 'entry', type: this.interfaceName }] },
         { parameters: [{ name: 'id', type: 'string' }, { name: 'fields', type: this.fieldsName }] },
       ],
-      bodyText: `
-if (typeof entryOrId == 'string') {
-  if (!fields) {
-    throw new Error('No fields provided')
-  }
-
-  this.sys = {
-    id: entryOrId,
-    type: 'Entry',
-    space: undefined,
-    contentType: {
-      sys: {
-        type: 'Link',
-        linkType: 'ContentType',
-        id: '${contentType.sys.id}'
-      }
-    }
-  }
-  this.fields = fields
-} else {
-  if (typeof entryOrId.sys == 'undefined') {
-    throw new Error('Entry did not have a \`sys\`!')
-  }
-  if (typeof entryOrId.fields == 'undefined') {
-    throw new Error('Entry did not have a \`fields\`!')
-  }
-  Object.assign(this, entryOrId)
-}`,
+      bodyText: `super(entryOrId, '${contentType.sys.id}', fields)`,
     })
   }
 
