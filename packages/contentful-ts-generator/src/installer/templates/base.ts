@@ -1,4 +1,4 @@
-
+// tslint:disable:max-classes-per-file
 // tslint:disable-next-line:interface-over-type-literal
 export type JsonObject = { [k: string]: any }
 
