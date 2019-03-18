@@ -220,5 +220,6 @@ function requestLogger(config: any) {
 }
 
 function responseLogger(response: any) {
+  // tslint:disable-next-line:no-console
   console.log(response.status, response.config.url)
 }
