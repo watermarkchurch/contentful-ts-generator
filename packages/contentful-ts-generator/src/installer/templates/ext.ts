@@ -1,4 +1,5 @@
-import { IAsset, IEntry, Resolved } from './base'
+import { ContentfulClientApi, Entry as ContentfulEntry } from 'contentful'
+import { Entry, IAsset, IEntry, JsonObject, Resolved } from './base'
 
 // Comment this out if you do not have the `contentful` NPM module installed.
 declare module 'contentful' {
@@ -21,6 +22,25 @@ declare module 'contentful' {
     getEntry<T extends IEntry<any>>(id: string, query?: any): Promise<Resolved<T>>
     getEntry<T>(id: string, query?: any): Promise<Resolved<Entry<T>>>
   }
+}
 
-  // tslint:enable:interface-name
+declare module './base' {
+  export interface Entry<TFields extends JsonObject> {
+    /**
+     * Resolves this entry to the specified depth (less than 10), and returns the
+     * raw object.
+     * @param n The depth to resolve to.
+     * @param client The client to use.
+     */
+    resolve(n: number, client: ContentfulClientApi, query?: any): Promise<Resolved<IEntry<TFields>>>
+  }
+}
+
+Entry.prototype.resolve = async function(n, client, query?: any) {
+  const id = this.sys.id
+  const entry = await client.getEntry(id, Object.assign({}, query, { include: n }))
+  const pojo = (entry as ContentfulEntry<any>).toPlainObject()
+
+  Object.assign(this, pojo)
+  return pojo
 }

@@ -130,20 +130,46 @@ test('Menu can wrap Contentful.js objects', async (t) => {
   t.deepEqual(button.text, 'Pricing')
 })
 
-async function loadFixtures() {
-  const fixtures = await Promise.all(
-    (await globby(path.join(__dirname, 'fixtures/*.json')))
-      .map(async (f) => {
-        const fixture = await fs.readFile(f)
-        return [path.basename(f), JSON.parse(fixture.toString())] as [string, any]
-      }),
-    )
+test('Menu resolve gets linked objects', async (t) => {
+  const { tmpDir } = (t.context as any)
+  const menuPath = path.join(tmpDir, 'generated/menu.ts')
+  const buttonPath = path.join(tmpDir, 'generated/menu_button.ts')
 
-  return fixtures.reduce((memo, file: [string, any]) => {
-    memo[file[0]] = file[1]
-    return memo
-  }, {} as { [name: string]: any })
-}
+  // symlink "contentful" to pretend like it's been installed in node_modules
+  const modulesDir = path.join(tmpDir, 'node_modules')
+  await fs.mkdirp(modulesDir)
+  await fs.symlink(path.join(__dirname, '../node_modules/contentful'), path.join(modulesDir, 'contentful'))
+
+  // require the index path to get "ext"
+  require(tmpDir)
+  const { Menu } = require(menuPath)
+  const { MenuButton } = require(buttonPath)
+
+  const menu = new Menu('20bohaVp20MyKSi0YCaw8s', 'menu', {
+    name: 'Side Hamburger',
+    items: [
+      { sys: { type: 'Link', linkType: 'Entry', id: 'DJfq5Q1ZbayWmgYSGuCSa' } },
+      { sys: { type: 'Link', linkType: 'Entry', id: '4FZb5aqcFiUKASguCEIYei' } },
+      { sys: { type: 'Link', linkType: 'Entry', id: '2kwNEGo2kcoIWCOICASIqk' } },
+    ],
+  })
+
+  nockEnvironment()
+  nock('https://cdn.contentful.com')
+    .get('/spaces/testspace/environments/master/entries')
+    .query({
+      'sys.id':  '20bohaVp20MyKSi0YCaw8s',
+      'include': 1,
+      'otherParam': 'test',
+    })
+    .replyWithFile(200, path.join(__dirname, 'fixtures/menu.json'))
+  const resolved = await menu.resolve(1, client, { otherParam: 'test' })
+
+  const button = menu.items[0]
+  t.true(button instanceof MenuButton)
+  t.deepEqual(button.text, 'Pricing')
+  t.deepEqual(resolved.fields.items[0].fields.text, 'Pricing')
+})
 
 function nockEnvironment() {
   nock('https://cdn.contentful.com')
