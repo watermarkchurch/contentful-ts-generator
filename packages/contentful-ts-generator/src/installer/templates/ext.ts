@@ -1,5 +1,6 @@
 import { IAsset, IEntry, Resolved } from './base'
 
+// Comment this out if you do not have the `contentful` NPM module installed.
 declare module 'contentful' {
   // tslint:disable:interface-name
   export interface Entry<T> {
