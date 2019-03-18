@@ -78,54 +78,60 @@ environment.plugins.append('ContentfulTsGenerator', new ContentfulTsGeneratorPlu
 #### Example:
 
 ```tsx
-import { ILink, isLink, Resolved } from '../../lib/contentful'
+import { ContentfulClientApi } from 'contentful'
+import { Resolved } from './lib/contentful'
 import {
-  IMenu,
-  IMenuButton
-} from '../../lib/contentful/generated'
+  IMenu
+} from './lib/contentful/generated'
 
+interface IProps {
+  menuId: string,
+  client: ContentfulClientApi
+}
 
-export class MenuRenderer extends React.Component<{ entry: IMenu }, { resolvedMenu: Resolved<IMenu> }> {
+interface IState {
+  resolvedMenu: Resolved<IMenu>
+}
+
+export class MenuRenderer extends React.Component<IProps, IState> {
 
   public componentDidMount() {
-    this.resolveMenuLinks()
+    this.loadMenu()
   }
 
   public render() {
     const { resolvedMenu } = this.state
 
     if (!resolvedMenu) {
-      return <div className="waiting-indicator"></div>
+      return <div className="waiting-indicator">Loading...</div>
     }
 
     return <div>
-      {resolvedMenu.fields.items.map((btn) => (
-        <a href={btn.fields.externalLink}>
-          <i className={btn.fields.ionIcon}>
-          {btn.fields.text}
-        </a>
-      ))}
+      {resolvedMenu.fields.items.map(
+        // no need to cast here, the generated interface tells us it's an IMenuButton
+        (btn) => (
+          <a href={btn.fields.externalLink}>
+            <i className={btn.fields.ionIcon}>
+            {btn.fields.text}
+          </a>
+        )
+      )}
     </div>
   } 
   
-  private async resolveMenuLinks() {
-    const resolvedMenu: Resolved<IMenu> = this.props.menu
+  private async loadMenu() {
+    const { menuId, client } = this.props
 
-    for (const i = 0; i < resolvedMenu.fields.items.length; i++) {
-      const link = resolvedMenu.fields.items[i]
-      if (isLink(link)) {
-        resolvedMenu.fields.items[i] =
-          // ... use the Contentful client to get the linked entry
-          await client.getEntry(link.sys.id)
-      }
-    }
+    // By default, client.getEntry resolves one level of links.
+    // This is represented with the `Resolved<IMenu>` type, which is what gets
+    // returned here.
+    const resolvedMenu = await client.getEntry<IMenu>(menuId)
    
     this.setState({
       resolvedMenu
     })
   }
 }
-
 ```
 
 What does `'generated/menu.ts'` look like?
@@ -275,3 +281,100 @@ export class Menu implements IMenu {
 }
 
 ```
+
+The interface represents data coming back from Contentful's `getEntry` SDK function.
+The generated class can be used as a convenient wrapper.  For example:
+
+```ts
+const menu = new Menu(await client.getEntry('my-menu-id'))
+const button0 = menu.items[0]
+
+expect(button0.text).to.equal('About Us')
+```
+
+You can also extend the generated classes with your own functions and properties.
+As an example, suppose you wanted to use some client-side logic to determine
+whether a certain menu button should be hidden from users. You could define
+an `accessLevel` property on menu button:
+
+```ts
+// in lib/contentful/ext/menu_button.ts
+import { MenuButton } from '../generated/menu_button'
+
+// reopen the MenuButton module to add properties and functions to
+// the Typescript definition
+declare module '../generated/menu_button' {
+  export interface MenuButton {
+    accessLevel: number
+  }
+}
+
+
+const restrictedPages: Array<[string | RegExp, number]> = [
+  [/^admin/, 9],
+]
+
+// Define a javascript property which becomes the actual
+// property implementation
+Object.defineProperty(MenuButton.prototype, 'accessLevel', {
+  get() {
+    const slug: string = this.link && isEntry(this.link) ?
+      this.link.slug :
+      this.externalLink
+
+    if (!slug) {
+      return 0
+    }
+
+    for (const restriction of restrictedPages) {
+      const test = restriction[0]
+      const accessLevel = restriction[1]
+
+      if (test.test(slug)) {
+        return restriction[1]
+      }
+
+      return 0
+    }
+  },
+  enumerable: true,
+})
+```
+
+And using it in your react component:
+
+```tsx
+import { Menu } from './lib/contentful/generated'
+
+interface IProps {
+  resolvedMenu: Menu,
+  currentUser: {
+    accessLevel: number
+  }
+}
+
+export class MenuRenderer extends React.Component<IProps> {
+
+  public render() {
+    const { resolvedMenu, currentUser } = this.props
+
+    return <div>
+      {
+        resolvedMenu.items
+          // Here we only show the buttons that the current user has access to see.
+          // Since `resolvedMenu` is an instance of Menu, its `items` field contains
+          // only MenuButton instances, which have our property defined on them.
+          .filter((btn) => currentUser.accessLevel >= btn.accessLevel)
+          .map((btn) => (
+            <a href={btn.externalLink}>
+              <i className={btn.ionIcon}>
+              {btn.text}
+            </a>
+          ))
+      }
+    </div>
+  }
+}
+```
+
+This is a cleaner implementation than putting the access level logic in the view.
