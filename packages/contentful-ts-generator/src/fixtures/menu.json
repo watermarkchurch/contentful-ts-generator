@@ -1,0 +1,188 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 1,
+  "skip": 0,
+  "limit": 100,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "7yx6ovlj39n5"
+          }
+        },
+        "id": "20bohaVp20MyKSi0YCaw8s",
+        "type": "Entry",
+        "createdAt": "2018-04-19T16:12:15.540Z",
+        "updatedAt": "2018-04-19T16:12:15.540Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 1,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "menu"
+          }
+        },
+        "locale": "en-US"
+      },
+      "fields": {
+        "name": "Side Hamburger",
+        "items": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "DJfq5Q1ZbayWmgYSGuCSa"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "4FZb5aqcFiUKASguCEIYei"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "2kwNEGo2kcoIWCOICASIqk"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "includes": {
+    "Entry": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "2kwNEGo2kcoIWCOICASIqk",
+          "type": "Entry",
+          "createdAt": "2018-04-19T15:37:29.876Z",
+          "updatedAt": "2018-08-15T14:48:14.211Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 5,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "text": "Details",
+          "link": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "4xNnFJ77egkSMEogE2yISa"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "4FZb5aqcFiUKASguCEIYei",
+          "type": "Entry",
+          "createdAt": "2018-04-19T15:37:49.121Z",
+          "updatedAt": "2018-04-19T15:37:49.121Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "text": "Register",
+          "externalLink": "http://serviceu.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "7yx6ovlj39n5"
+            }
+          },
+          "id": "DJfq5Q1ZbayWmgYSGuCSa",
+          "type": "Entry",
+          "createdAt": "2018-04-19T15:47:22.395Z",
+          "updatedAt": "2018-04-19T15:47:22.395Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "menuButton"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "text": "Pricing",
+          "link": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "1hAed5DNlg280sgyqaQosW"
+            }
+          }
+        }
+      }
+    ]
+  }
+}
