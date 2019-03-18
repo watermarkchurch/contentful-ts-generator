@@ -16,10 +16,10 @@
     "typescript",
     "codegen"
   ],
-  "homepage": "https://github.com/gburgett/ts-generators/tree/master/packages/contentful-ts-generator",
+  "homepage": "https://github.com/watermarkchurch/ts-generators/tree/master/packages/contentful-ts-generator",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gburgett/ts-generators.git"
+    "url": "https://github.com/watermarkchurch/ts-generators.git"
   },
   "author": "Gordon Burgett (gordon@gordonburgett.net)",
   "license": "MIT",
