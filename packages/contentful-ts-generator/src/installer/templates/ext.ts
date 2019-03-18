@@ -1,6 +1,4 @@
-import { Resolved } from '.'
-import { IAsset, IEntry } from './base'
-import { TypeDirectory } from './generated'
+import { IAsset, IEntry, Resolved } from './base'
 
 declare module 'contentful' {
   // tslint:disable:interface-name
@@ -20,6 +18,7 @@ declare module 'contentful' {
      * type is a Resolved entry.
      */
     getEntry<T extends IEntry<any>>(id: string, query?: any): Promise<Resolved<T>>
+    getEntry<T>(id: string, query?: any): Promise<Resolved<Entry<T>>>
   }
 
   // tslint:enable:interface-name

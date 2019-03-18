@@ -1,25 +1,22 @@
 /*
  * This is a sample extension file to illustrate extending the
  * generated wrapper classes with custom methods or properties.
- * Uncomment the require line in 'ext.ts' to use this file.
+ * Uncomment the require line in 'index.ts' to use this file.
  */
 
+/*
+
 import { isEntry } from '../base'
-import { IMenu, Menu, MenuButton } from '../generated/menu_button'
+import { IMenu, Menu } from '../generated/menu'
+import { MenuButton } from '../generated/menu_button'
 
 // reopen the MenuButton module to add properties and functions to
 // the Typescript definition
 declare module '../generated/menu_button' {
   // tslint:disable-next-line:interface-name
   export interface MenuButton {
-    /**
-     * Determines the access level for the linked page.
-     */
     readonly accessLevel: number
 
-    /**
-     * Gets all the menus that link to me
-     */
     menusThatLinkToMe(): Promise<Menu[]>
   }
 }
@@ -68,3 +65,5 @@ MenuButton.prototype.menusThatLinkToMe = async function() {
 }
 
 export {}
+
+// */

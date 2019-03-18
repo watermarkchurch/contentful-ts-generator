@@ -8,4 +8,4 @@ export type KnownContentType = keyof TypeDirectory
 
 require('./ext')
 // include this to extend the generated objects
-// require('./ext/my-extensions')
+// require('./ext/menu')
