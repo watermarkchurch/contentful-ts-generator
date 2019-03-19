@@ -95,14 +95,16 @@ export class ContentfulTSGeneratorPlugin {
 
   public compile = async () => {
     const options = this.options
-    const indexFileName = path.join(path.resolve(options.outputDir), 'index.ts')
+    const indexFileName = path.join(path.resolve(options.outputDir), 'generated', 'index.ts')
 
     if (this.options.downloadSchema) {
       await this.downloader().downloadSchema()
-    } else if (fs.existsSync(indexFileName)) {
-      const o = fs.statSync(indexFileName)
-      const s = fs.statSync(options.schemaFile)
-      if (s.mtime < o.mtime) {
+    } else if (await fs.pathExists(indexFileName)) {
+      const [i, s] = await Promise.all([
+        fs.statSync(indexFileName),
+        fs.statSync(options.schemaFile),
+      ])
+      if (s.mtime < i.mtime) {
         this.options.logger.log(`${options.schemaFile} not modified, skipping generation`)
         return
       }
