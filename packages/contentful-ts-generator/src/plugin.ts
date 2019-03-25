@@ -38,7 +38,11 @@ export class ContentfulTSGeneratorPlugin {
       managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
       space: process.env.CONTENTFUL_SPACE_ID,
       environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
-      logger: console,
+      logger: {
+        debug: () => null,
+        // tslint:disable-next-line:no-console
+        log: console.error,
+      },
     }, options)
 
     if (opts.downloadSchema) {
