@@ -9,6 +9,7 @@ import {
 } from 'ts-morph'
 
 import { ContentTypeWriter } from './content-type-writer'
+import defaults from './defaults'
 
 const formatSettings: FormatCodeSettings = {
   convertTabsToSpaces: true,
@@ -26,27 +27,11 @@ export class ContentfulTSGenerator {
   private readonly options: Readonly<IGeneratorOptions>
 
   constructor(options?: Partial<IGeneratorOptions>) {
-    const opts = Object.assign({
+    const opts = Object.assign(
+      defaults,
+      options)
 
-    }, options)
-
-    if (!opts.schemaFile) {
-      if (fs.statSync('db').isDirectory()) {
-        opts.schemaFile = 'db/contentful-schema.json'
-      } else {
-        opts.schemaFile = 'contentful-schema.json'
-      }
-    }
-
-    if (!opts.outputDir) {
-      if (fs.statSync('app/assets/javascripts')) {
-        opts.outputDir = 'app/assets/javascripts/lib/contentful/generated'
-      } else {
-        opts.outputDir = 'lib/contentful/generated'
-      }
-    }
-
-    this.options = opts as IGeneratorOptions
+    this.options = opts
   }
 
   public generate = async () => {

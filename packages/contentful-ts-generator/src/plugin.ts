@@ -3,6 +3,7 @@ import * as path from 'path'
 import { Compiler } from 'webpack'
 
 import { callbackify } from 'util'
+import defaults from './defaults'
 import { ContentfulTSGenerator, IGeneratorOptions } from './generator'
 import { Installer } from './installer'
 import { SchemaDownloader } from './schema-downloader'
@@ -35,9 +36,7 @@ export class ContentfulTSGeneratorPlugin {
 
   constructor(options?: Partial<IPluginOptions>) {
     const opts = Object.assign({
-      managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
-      space: process.env.CONTENTFUL_SPACE_ID,
-      environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
+      ...defaults,
       logger: {
         debug: () => null,
         // tslint:disable-next-line:no-console
@@ -54,22 +53,6 @@ export class ContentfulTSGeneratorPlugin {
       }
       if (!opts.environment) {
         throw new Error('Environment must be provided in order to download schema')
-      }
-    }
-
-    if (!opts.schemaFile) {
-      if (fs.statSync('db').isDirectory()) {
-        opts.schemaFile = 'db/contentful-schema.json'
-      } else {
-        opts.schemaFile = 'contentful-schema.json'
-      }
-    }
-
-    if (!opts.outputDir) {
-      if (fs.statSync('app/assets/javascripts')) {
-        opts.outputDir = 'app/assets/javascripts/lib/contentful'
-      } else {
-        opts.outputDir = 'lib/contentful'
       }
     }
 

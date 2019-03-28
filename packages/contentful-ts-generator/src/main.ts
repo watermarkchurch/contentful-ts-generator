@@ -3,6 +3,7 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as yargs from 'yargs'
 
+import defaults from './defaults'
 import { ContentfulTSGenerator } from './generator'
 import { Installer } from './installer'
 import { SchemaDownloader } from './schema-downloader'
@@ -80,27 +81,13 @@ async function Run(args: IArgv, logger: ILogger = console) {
   ])
 }
 
-const args = Object.assign<Partial<IArgv>, Partial<IArgv>>({
-  managementToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
-  space: process.env.CONTENTFUL_SPACE_ID,
-  environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
-}, yargs.argv as Partial<IArgv>)
-
-if (!args.file) {
-  if (fs.statSync('db').isDirectory()) {
-    args.file = 'db/contentful-schema.json'
-  } else {
-    args.file = 'contentful-schema.json'
-  }
-}
-
-if (!args.out) {
-  if (fs.statSync('app/assets/javascripts')) {
-    args.out = 'app/assets/javascripts/lib/contentful'
-  } else {
-    args.out = 'lib/contentful'
-  }
-}
+const args = Object.assign<Partial<IArgv>, Partial<IArgv>>(
+  {
+    ...defaults,
+    out: defaults.outputDir,
+    file: defaults.schemaFile,
+  },
+  yargs.argv as Partial<IArgv>)
 
 if (typeof (args.download) == 'undefined') {
   if (args.managementToken && args.space && args.environment) {
