@@ -38,6 +38,9 @@ export class ContentfulTSGenerator {
     const options = this.options
     const indexFileName = path.join(path.resolve(options.outputDir), 'index.ts')
 
+    if (!await fs.pathExists(options.schemaFile)) {
+      throw new Error('Schema file does not exist - please use the `download` option to download it from the space')
+    }
     const schemaContents = (await fs.readFile(options.schemaFile))
     const schema = JSON.parse(schemaContents.toString())
 

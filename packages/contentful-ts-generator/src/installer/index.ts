@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra'
 import globby from 'globby'
 import * as path from 'path'
+import defaults from '../defaults'
 
 interface IInstallerOptions {
   outputDir: string
@@ -15,16 +16,9 @@ export class Installer {
 
   constructor(options?: Partial<IInstallerOptions>) {
     const opts = Object.assign({
+      ...defaults,
       logger: console,
     }, options)
-
-    if (!opts.outputDir) {
-      if (fs.statSync('app/assets/javascripts')) {
-        opts.outputDir = 'app/assets/javascripts/lib/contentful/generated'
-      } else {
-        opts.outputDir = 'lib/contentful/generated'
-      }
-    }
 
     this.options = opts as IInstallerOptions
   }

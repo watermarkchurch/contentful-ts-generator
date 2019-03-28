@@ -1,14 +1,14 @@
 import * as fs from 'fs-extra'
 
 let outputDir: string
-if (fs.statSync('app/assets/javascripts')) {
-  outputDir = 'app/assets/javascripts/lib/contentful/generated'
+if (fs.existsSync('app/assets/javascripts')) {
+  outputDir = 'app/assets/javascripts/lib/contentful'
 } else {
-  outputDir = 'lib/contentful/generated'
+  outputDir = 'lib/contentful'
 }
 
 let schemaFile: string
-if (fs.statSync('db').isDirectory()) {
+if (fs.existsSync('db') && fs.statSync('db').isDirectory()) {
   schemaFile = 'db/contentful-schema.json'
 } else {
   schemaFile = 'contentful-schema.json'
