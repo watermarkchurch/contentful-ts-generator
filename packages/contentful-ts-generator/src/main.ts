@@ -18,6 +18,7 @@ interface IArgv {
   managementToken: string,
   space: string,
   environment: string
+  verbose?: boolean
 }
 
 interface ILogger {
@@ -51,6 +52,11 @@ yargs
   .option('environment', {
     alias: 'e',
     describe: 'The Contentful environment.  Defaults to the env var CONTENTFUL_ENVIRONMENT or \'master\'',
+  })
+  .option('verbose', {
+    boolean: true,
+    alias: 'v',
+    describe: 'Enable verbose logging',
   })
 
 // tslint:disable-next-line:no-shadowed-variable
@@ -99,10 +105,16 @@ if (typeof (args.download) == 'undefined') {
 
 // tslint:disable:no-console
 
-const logger = {
+const logger: ILogger = {
   error: console.error,
   log: console.log,
   debug: () => undefined,
+}
+
+if (args.verbose) {
+  logger.debug = (...msg: any[]) => {
+    console.debug(chalk.gray(...msg))
+  }
 }
 
 Run(args as IArgv, logger)
