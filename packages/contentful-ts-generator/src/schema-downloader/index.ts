@@ -58,6 +58,9 @@ export class SchemaDownloader {
       contentTypes,
       editorInterfaces,
     }, undefined, '  '))
+
+    // contentful-shell and the wcc-contentful gem both add a newline at the end of the file.
+    await fs.appendFile(file, '\n')
   }
 
   private async getSchemaFromSpace() {
