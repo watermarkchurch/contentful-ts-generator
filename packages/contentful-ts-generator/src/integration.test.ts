@@ -1,7 +1,6 @@
 import test, { before } from 'ava'
 import {createClient} from 'contentful'
 import * as fs from 'fs-extra'
-import globby from 'globby'
 import * as nock from 'nock'
 import * as path from 'path'
 import * as tmp from 'tmp'
