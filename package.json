@@ -1,14 +1,18 @@
 {
   "name": "ts-generators",
   "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "description": "A toolbox of typescript generators",
   "scripts": {
     "lint": "tslint --project tsconfig.json 'packages/*/src/**/*.ts'",
     "fix": "tslint --project tsconfig.json 'packages/*/src/**/*.ts' --fix",
-    "install": "bash -c 'for f in packages/*/package.json; do pushd `dirname \"$f\"` && npm install && popd; done'",
-    "test": "bash -c 'for f in packages/*/package.json; do pushd `dirname \"$f\"` && npm run test && popd; done'",
+    "install": "lerna bootstrap",
+    "test": "lerna run test",
     "coveralls": "bash -c 'for f in packages/*/package.json; do pushd `dirname \"$f\"` && nyc report --reporter=text-lcov && popd; done' | coveralls",
-    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm packages/*/src/**/*.js packages/*/src/**/*.map packages/*/src/**/*.d.ts'"
+    "clean": "lerna run clean"
   },
   "homepage": "https://github.com/gburgett/ts-generators",
   "repository": {
@@ -23,6 +27,7 @@
     "@types/yargs": "^12.0.9",
     "ava": "^1.2.0",
     "coveralls": "^3.0.2",
+    "lerna": "^3.13.1",
     "nyc": "^13.1.0",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",

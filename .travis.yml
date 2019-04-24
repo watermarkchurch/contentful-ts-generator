@@ -2,8 +2,8 @@ language: node_js
 node_js:
   - node
 before_script:
-  - npm run install
+  - yarn run lerna bootstrap
 script:
-  - npm run test
-  - npm run coveralls
-  - npm run lint
+  - yarn run test
+  - yarn run coveralls
+  - yarn run lint
