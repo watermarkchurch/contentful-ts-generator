@@ -1,0 +1,59 @@
+{
+  "name": "rails-model-ts-generator",
+  "version": "0.0.1",
+  "description": "A CLI & webpack plugin for automatically generating Typescript code based on the models in your rails app",
+  "author": "Gordon Burgett (gordon@gordonburgett.net)",
+  "homepage": "https://github.com/watermarkchurch/ts-generators/tree/master/packages/rails-model-ts-generator#readme",
+  "license": "MIT",
+  "main": "lib/rails-model-ts-generator.js",
+  "scripts": {
+    "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js'",
+    "test-watch": "ava --watch",
+    "build": "tsc --project tsconfig.dist.json",
+    "prepare": "npm run clean && npm run build && rsync -avR src/./installer/templates dist",
+    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts; rm -rf src/**/tmp'; true"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [
+    "rails",
+    "activemodel",
+    "typescript",
+    "codegen"
+  ],
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/watermarkchurch/ts-generators.git"
+  },
+  "bugs": {
+    "url": "https://github.com/watermarkchurch/ts-generators/issues"
+  },
+  "ava": {
+    "files": [
+      "src/**/*.test.ts"
+    ],
+    "cache": true,
+    "failFast": true,
+    "verbose": true,
+    "compileEnhancements": false,
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  },
+  "devDependencies": {
+    "ava": "^1.4.1",
+    "coveralls": "^3.0.3",
+    "nyc": "^14.0.0",
+    "ts-node": "^8.1.0",
+    "tslint": "^5.16.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.4.5"
+  }
+}

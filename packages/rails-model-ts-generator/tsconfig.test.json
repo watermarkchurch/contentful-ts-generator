@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+  },
+  "exclude": [
+    "**/tmp/**/*.ts",
+    "**/templates/**/*.ts"
+  ]
+}

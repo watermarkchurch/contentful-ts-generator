@@ -12,8 +12,5 @@
     "types": [
       "node"
     ]
-  },
-  "include": [
-    "packages/*/src/**/*.ts"
-  ]
+  }
 }

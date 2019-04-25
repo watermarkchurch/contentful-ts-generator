@@ -14,10 +14,10 @@
     "coveralls": "bash -c 'for f in packages/*/package.json; do pushd `dirname \"$f\"` && nyc report --reporter=text-lcov && popd; done' | coveralls",
     "clean": "lerna run clean"
   },
-  "homepage": "https://github.com/gburgett/ts-generators",
+  "homepage": "https://github.com/watermarkchurch/ts-generators",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gburgett/ts-generators.git"
+    "url": "https://github.com/watermarkchurch/ts-generators.git"
   },
   "keywords": [],
   "author": "Gordon Burgett (gordon@gordonburgett.net)",
