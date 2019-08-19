@@ -63,6 +63,7 @@ yargs
 async function Run(args: IArgv, logger: ILogger = console) {
   if (args.download) {
     const downloader = new SchemaDownloader({
+      ...args,
       directory: path.dirname(args.file),
       filename: path.basename(args.file),
       logger,
