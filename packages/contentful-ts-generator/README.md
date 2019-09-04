@@ -41,10 +41,12 @@ Typescript files in `app/assets/javascripts/lib/contentful/generated`.
 
 In your webpack.config.js:
 ```js
+const ContentfulTsGenerator = require('contentful-ts-generator')
+
 module.exports = {
   ...
   plugins: [    
-    new ContentfulTsGeneratorPlugin({
+    new ContentfulTsGenerator.ContentfulTsGeneratorPlugin({
       /** (Optional) The location on disk of the schema file. */
       schemaFile: 'db/contentful-schema.json',
       /** (Optional) Where to place the generated code. */
