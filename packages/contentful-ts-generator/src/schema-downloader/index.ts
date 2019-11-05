@@ -75,12 +75,13 @@ export class SchemaDownloader {
     const editorInterfaces = (await Promise.all<any>(
       contentTypesResp.items.map((ct: any) =>
         this.semaphore.lock<any>(async () =>
+        sortControls(
           stripSys(
             (await ct.getEditorInterface())
               .toPlainObject(),
           ),
         ),
-      ),
+      )),
     )).sort(byContentType)
     const contentTypes = contentTypesResp.items.map((ct: any) =>
       stripSys(ct.toPlainObject()))
@@ -112,6 +113,19 @@ function stripSys(obj: any): any {
   }
 }
 
+function sortControls(editorInterface: any) {
+  return {
+    sys: editorInterface.sys,
+    controls: editorInterface.controls
+      .sort(byFieldId)
+      .map((c: any) => ({
+        fieldId: c.fieldId,
+        settings: c.settings,
+        widgetId: c.widgetId,
+      })),
+  }
+}
+
 function byId(a: { sys: { id: string } }, b: { sys: { id: string } }): number {
   return a.sys.id.localeCompare(b.sys.id)
 }
@@ -121,4 +135,11 @@ function byContentType(
   b: {sys: {contentType: {sys: {id: string}}}},
 ): number {
   return a.sys.contentType.sys.id.localeCompare(b.sys.contentType.sys.id)
+}
+
+function byFieldId(
+  a: { fieldId: string },
+  b: { fieldId: string },
+): number {
+  return a.fieldId.localeCompare(b.fieldId)
 }

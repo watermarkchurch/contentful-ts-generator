@@ -98,12 +98,15 @@
       },
       "controls": [
         {
-          "fieldId": "name",
-          "widgetId": "singleLine"
-        },
-        {
           "fieldId": "items",
           "widgetId": "entryLinksEditor"
+        },
+        {
+          "fieldId": "name",
+          "settings": {
+            "helpText": "This is the name"
+          },
+          "widgetId": "singleLine"
         }
       ]
     },

@@ -220,6 +220,9 @@
       "controls": [
         {
           "fieldId": "name",
+          "settings": {
+            "helpText": "This is the name"
+          },
           "widgetId": "singleLine"
         },
         {
@@ -274,11 +277,13 @@
       "controls": [
         {
           "fieldId": "name",
-          "widgetId": "singleLine"
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
         },
         {
           "fieldId": "photo",
-          "widgetId": "assetLinkEditor"
+          "widgetId": "assetLinkEditor",
+          "widgetNamespace": "builtin"
         }
       ]
     }
