@@ -31,7 +31,7 @@
     "@types/node": "^11.11.3",
     "@types/tmp": "0.0.34",
     "@types/webpack": "^4.4.25",
-    "@types/yargs": "^12.0.9",
+    "@types/yargs": "^13.0.3",
     "ava": "^1.2.0",
     "contentful": "^7.4.3",
     "coveralls": "^3.0.2",
