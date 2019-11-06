@@ -137,7 +137,7 @@ test('Menu resolve gets linked objects', async (t) => {
   // symlink "contentful" to pretend like it's been installed in node_modules
   const modulesDir = path.join(tmpDir, 'node_modules')
   await fs.mkdirp(modulesDir)
-  await fs.symlink(path.join(__dirname, '../node_modules/contentful'), path.join(modulesDir, 'contentful'))
+  await fs.symlink(path.join(__dirname, '../../../node_modules/contentful'), path.join(modulesDir, 'contentful'))
 
   // require the index path to get "ext"
   require(tmpDir)
