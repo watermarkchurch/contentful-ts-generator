@@ -58,7 +58,7 @@
     ]
   },
   "dependencies": {
-    "async-toolbox": "^0.2.4",
+    "async-toolbox": "^0.4.2",
     "chalk": "^2.4.2",
     "contentful-management": "^5.7.0",
     "fs-extra": "^7.0.1",
