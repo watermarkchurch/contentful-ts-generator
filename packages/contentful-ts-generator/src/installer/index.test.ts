@@ -25,7 +25,7 @@ test('installs templates to empty directory', async (t) => {
 
   await installer.install()
 
-  const templateFiles = ['base.ts', 'index.ts', 'utils.ts']
+  const templateFiles = ['base.ts', 'index.ts', 'utils.ts', '.gitignore']
 
   await Promise.all(templateFiles.map(async (file) => {
     const fullPath = path.join(tmpDir, file)
@@ -59,4 +59,26 @@ test('does not overwrite existing files in the directory', async (t) => {
   const contents = await fs.readFile(path.join(tmpDir, 'base.ts'))
   t.deepEqual(contents.toString(), '// test test test')
 
+})
+
+test('does not install any files if index exists', async (t) => {
+  const { tmpDir } = (t.context as any)
+
+  const installer = new Installer({
+    outputDir: tmpDir,
+  })
+
+  await fs.writeFile(path.join(tmpDir, 'index.ts'), '// test test test')
+
+  await installer.install()
+
+  const templateFiles = ['base.ts', 'utils.ts']
+
+  await Promise.all(templateFiles.map(async (file) => {
+    const fullPath = path.join(tmpDir, file)
+    t.false(await fs.pathExists(fullPath), `${fullPath} should not exist`)
+  }))
+
+  const contents = await fs.readFile(path.join(tmpDir, 'index.ts'))
+  t.deepEqual(contents.toString(), '// test test test')
 })

@@ -24,7 +24,12 @@ export class Installer {
   }
 
   public install = async () => {
-    const files = await globby(path.join(templateDir, '**/*.ts'))
+    if (await fs.pathExists(path.join(this.options.outputDir, 'index.ts'))) {
+      // already installed - don't reinstall
+      return
+    }
+
+    const files = await globby(path.join(templateDir, '**/*'), { dot: true })
     await Promise.all(files.map(async (file) =>
       this.installFile(file),
     ))
