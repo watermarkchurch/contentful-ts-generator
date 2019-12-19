@@ -1,6 +1,6 @@
 {
   "name": "contentful-ts-generator",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A CLI & webpack plugin for automatically generating Typescript code based on the content types in your Contentful space.",
   "main": "dist/index.js",
   "bin": "bin/contentful-ts-generator",
