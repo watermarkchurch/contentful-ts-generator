@@ -91,8 +91,11 @@ export class ContentTypeWriter {
       extends: `Entry<${this.fieldsName}>`,
       implements: [this.interfaceName],
       properties: [
-        { name: 'sys', isReadonly: true, hasExclamationToken: true, scope: Scope.Public, type: `ISys<'Entry'>` },
-        { name: 'fields', isReadonly: true, hasExclamationToken: true, scope: Scope.Public, type: this.fieldsName },
+        // These are inherited from the base class and do not need to be redefined here.
+        // Further, babel 7 transforms the constructor in such a way that the `Object.assign(this, entryOrId)`
+        // in the base class gets wiped if these properties are present.
+        // { name: 'sys', isReadonly: true, hasExclamationToken: true, scope: Scope.Public, type: `ISys<'Entry'>` },
+        // { name: 'fields', isReadonly: true, hasExclamationToken: true, scope: Scope.Public, type: this.fieldsName },
       ],
     })
 
