@@ -10,7 +10,6 @@
     "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js'",
     "test-watch": "ava --watch",
     "build": "tsc --project tsconfig.dist.json && rsync -avR src/./installer/templates dist",
-    "prepare": "yarn run clean && yarn run build",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts; rm -rf src/**/tmp dist'; true"
   },
