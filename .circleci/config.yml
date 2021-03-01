@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@3.0.0
+  coveralls: coveralls/coveralls@1.0.6
 
 jobs:
   test:
@@ -16,21 +17,29 @@ jobs:
       - restore_cache:
           name: Restore Yarn Cache
           keys:
-            - repo-deps-{{ checksum "yarn.lock" }}
+            - repo-node-<< parameters.version >>-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
           command: |
             yarn install --frozen-lockfile
       - save_cache:
           name: Save Yarn Package Cache
-          key: repo-deps-{{ checksum "yarn.lock" }}
+          key: repo-node-<< parameters.version >>-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
       - run: yarn run test
-      - run: yarn run coveralls
+      - coveralls/upload:
+          parallel: true
+          flag_name: Node << parameters.version >>
+
       - run: yarn run lint
-  
+  done:
+    executor:
+      name: node/default
+    steps:
+      - coveralls/upload:
+          parallel_finished: true
 
 workflows:
   matrix-tests:
@@ -39,3 +48,5 @@ workflows:
           matrix:
             parameters:
               version: ["15.10.0", "13.14.0", "10.24.0"]
+      - done:
+          requires: [test]

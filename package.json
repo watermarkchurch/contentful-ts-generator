@@ -7,11 +7,11 @@
   "scripts": {
     "lint": "tslint --project tsconfig.json 'packages/*/src/**/*.ts'",
     "fix": "tslint --project tsconfig.json 'packages/*/src/**/*.ts' --fix",
-    "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js'",
+    "test": "tsc --project tsconfig.test.json && nyc ava 'src/**/*.test.js' && mkdir -p ./coverage && yarn nyc report --reporter=text-lcov > ./coverage/lcov.info",
     "test-watch": "ava --watch",
     "build": "tsc --project tsconfig.dist.json && rsync -avR src/./installer/templates dist",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "clean": "rm -rf dist; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts; rm -rf src/**/tmp dist'; true"
+    "clean": "rm -rf dist coverage .nyc_output; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts; rm -rf src/**/tmp dist'; true"
   },
   "keywords": [
     "contentful",
