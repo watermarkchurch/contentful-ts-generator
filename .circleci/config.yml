@@ -47,6 +47,6 @@ workflows:
       - test:
           matrix:
             parameters:
-              version: ["15.10.0", "13.14.0", "10.24.0"]
+              version: ["15.10.0", "10.24.0"]
       - done:
           requires: [test]
