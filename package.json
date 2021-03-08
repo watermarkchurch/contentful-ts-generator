@@ -6,6 +6,7 @@
   "bin": "bin/contentful-ts-generator",
   "files": [
     "dist/**/*",
+    "bin/contentful-ts-generator",
     "README.md"
   ],
   "scripts": {
