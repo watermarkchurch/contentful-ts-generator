@@ -4,6 +4,10 @@
   "description": "A CLI & webpack plugin for automatically generating Typescript code based on the content types in your Contentful space.",
   "main": "dist/index.js",
   "bin": "bin/contentful-ts-generator",
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
   "scripts": {
     "lint": "tslint --project tsconfig.json 'packages/*/src/**/*.ts'",
     "fix": "tslint --project tsconfig.json 'packages/*/src/**/*.ts' --fix",
@@ -11,7 +15,8 @@
     "test-watch": "ava --watch",
     "build": "tsc --project tsconfig.dist.json && rsync -avR src/./installer/templates dist",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "clean": "rm -rf dist coverage .nyc_output; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts; rm -rf src/**/tmp dist'; true"
+    "clean": "rm -rf dist coverage .nyc_output; bash -c 'shopt -s globstar; rm src/**/*.js src/**/*.map src/**/*.d.ts; rm -rf src/**/tmp dist'; true",
+    "prepack": "yarn run build"
   },
   "keywords": [
     "contentful",
