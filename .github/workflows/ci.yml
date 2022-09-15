@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
@@ -46,8 +46,21 @@ jobs:
 
       - run: yarn run lint
 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - run: yarn run build
+
   finish:
-    needs: [test, lint]
+    needs: [test, lint, build]
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
