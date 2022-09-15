@@ -1,6 +1,5 @@
-import test from 'ava'
 import * as fs from 'fs-extra'
-import * as nock from 'nock'
+import nock from 'nock'
 import * as path from 'path'
 import * as tmp from 'tmp'
 
@@ -15,7 +14,8 @@ const opts = {
   space: 'testspace',
 }
 
-test.beforeEach(async () => {
+describe('SchemaDownloader', () => {
+beforeEach(async () => {
   const fixture = await fs.readFile(path.join(__dirname, 'fixtures/contentful-schema-from-export.json'))
   const schema = JSON.parse(fixture.toString())
   contentTypes = schema.contentTypes
@@ -118,7 +118,7 @@ test.beforeEach(async () => {
     })
 })
 
-test('creates the file in the appropriate directory', async (t) => {
+it('creates the file in the appropriate directory', async () => {
   const tmpdir = tmp.dirSync()
   try {
     const instance = new SchemaDownloader({
@@ -128,13 +128,13 @@ test('creates the file in the appropriate directory', async (t) => {
 
     await instance.downloadSchema()
 
-    t.true(await fs.pathExists(path.join(tmpdir.name, `/contentful-schema.json`)))
+    expect(await fs.pathExists(path.join(tmpdir.name, `/contentful-schema.json`))).toBeTruthy()
   } finally {
     tmpdir.removeCallback()
   }
 })
 
-test('writes file with proper formatting', async (t) => {
+it('writes file with proper formatting', async () => {
   const tmpdir = tmp.dirSync()
   try {
     const instance = new SchemaDownloader({
@@ -146,9 +146,11 @@ test('writes file with proper formatting', async (t) => {
 
     const contents = (await fs.readFile(path.join(tmpdir.name, 'contentful-schema.json'))).toString()
     const expected = (await fs.readFile(path.join(__dirname, 'fixtures/contentful-schema.json'))).toString()
-    t.deepEqual(contents, expected)
+    expect(contents).toEqual(expected)
 
   } finally {
     tmpdir.removeCallback()
   }
+})
+
 })

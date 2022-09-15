@@ -6,11 +6,13 @@
     "noImplicitAny": true,
     "strict": true,
     "sourceMap": true,
+    "esModuleInterop": true,
     "lib": [
       "es2015"
     ],
     "types": [
-      "node"
+      "node",
+      "jest"
     ]
   },
   "include": [

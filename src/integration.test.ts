@@ -1,7 +1,6 @@
-import test, { before } from 'ava'
 import {createClient} from 'contentful'
 import * as fs from 'fs-extra'
-import * as nock from 'nock'
+import nock from 'nock'
 import * as path from 'path'
 import * as tmp from 'tmp'
 import Project from 'ts-morph'
@@ -17,157 +16,159 @@ const client = createClient({
   requestLogger,
 } as any)
 
-before(async (t) => {
-  const tmpDir = await (promisify<string>((cb) => tmp.dir(cb))())
+describe('integration', () => {
+  let tmpDir: string
 
-  Object.assign(t.context, { tmpDir })
+  beforeEach(async () => {
+    tmpDir = await (promisify<string>((cb) => tmp.dir(cb))())
 
-  const installer = new Installer({
-    outputDir: tmpDir,
+    const installer = new Installer({
+      outputDir: tmpDir,
+    })
+
+    const generator = new ContentfulTSGenerator({
+      outputDir: path.join(tmpDir, 'generated'),
+      schemaFile: path.join(__dirname, 'fixtures/contentful-schema.json'),
+    })
+    await Promise.all([
+      installer.install(),
+      generator.generate(),
+    ])
   })
 
-  const generator = new ContentfulTSGenerator({
-    outputDir: path.join(tmpDir, 'generated'),
-    schemaFile: path.join(__dirname, 'fixtures/contentful-schema.json'),
-  })
-  await Promise.all([
-    installer.install(),
-    generator.generate(),
-  ])
-})
+  it('generates menu.ts', async () => {
+    
+    const menuPath = path.join(tmpDir, 'generated/menu.ts')
 
-test('generates menu.ts', async (t) => {
-  const { tmpDir } = (t.context as any)
-  const menuPath = path.join(tmpDir, 'generated/menu.ts')
+    const project = new Project()
+    const menuFile = project.addExistingSourceFile(menuPath)
 
-  const project = new Project()
-  const menuFile = project.addExistingSourceFile(menuPath)
-
-  t.true(menuFile.getClasses().length == 1)
-  t.deepEqual(menuFile.getClasses()[0].getName(), 'Menu')
-})
-
-test('Menu can be instantiated from raw entry', async (t) => {
-  const { tmpDir } = (t.context as any)
-  const menuPath = path.join(tmpDir, 'generated/menu.ts')
-
-  const { Menu } = require(menuPath)
-
-  const menu = new Menu({
-    sys: { id: 'test' },
-    fields: {
-      name: 'test name',
-      items: [
-        {
-          sys: {
-            type: 'Link',
-            id: 'test button',
-            linkType: 'Entry',
-          },
-        },
-      ],
-    },
+    expect(menuFile.getClasses().length).toEqual(1)
+    expect(menuFile.getClasses()[0].getName()).toEqual('Menu')
   })
 
-  t.deepEqual(menu.name, 'test name')
-  t.deepEqual(menu.items, [null])
-  t.deepEqual(menu.sys, { id: 'test' })
-  t.deepEqual(menu.fields.name, 'test name')
-})
+  it('Menu can be instantiated from raw entry', async () => {
+    
+    const menuPath = path.join(tmpDir, 'generated/menu.ts')
 
-test('Menu creates wrapped classes for resolved links', async (t) => {
-  const { tmpDir } = (t.context as any)
-  const menuPath = path.join(tmpDir, 'generated/menu.ts')
-  const buttonPath = path.join(tmpDir, 'generated/menu_button.ts')
+    const { Menu } = require(menuPath)
 
-  const { Menu } = require(menuPath)
-  const { MenuButton } = require(buttonPath)
-
-  const menu = new Menu({
-    sys: { id: 'test' },
-    fields: {
-      name: 'test name',
-      items: [
-        {
-          sys: {
-            type: 'Entry',
-            id: 'test button',
-            contentType: {
-              sys: {
-                id: 'menuButton',
-              },
+    const menu = new Menu({
+      sys: { id: 'test' },
+      fields: {
+        name: 'test name',
+        items: [
+          {
+            sys: {
+              type: 'Link',
+              id: 'test button',
+              linkType: 'Entry',
             },
           },
-          fields: {
-            title: 'Button Title',
-          },
-        },
-      ],
-    },
-  })
-
-  const button = menu.items[0]
-  t.true(button instanceof MenuButton)
-})
-
-test('Menu can wrap Contentful.js objects', async (t) => {
-  const { tmpDir } = (t.context as any)
-  const menuPath = path.join(tmpDir, 'generated/menu.ts')
-  const buttonPath = path.join(tmpDir, 'generated/menu_button.ts')
-
-  const { Menu } = require(menuPath)
-  const { MenuButton } = require(buttonPath)
-
-  nockEnvironment()
-  nock('https://cdn.contentful.com')
-    .get('/spaces/testspace/environments/master/entries?sys.id=20bohaVp20MyKSi0YCaw8s')
-    .replyWithFile(200, path.join(__dirname, 'fixtures/menu.json'))
-
-  const menu = new Menu(await client.getEntry<any>('20bohaVp20MyKSi0YCaw8s'))
-  const button = menu.items[0]
-  t.true(button instanceof MenuButton)
-  t.deepEqual(button.text, 'Pricing')
-})
-
-test('Menu resolve gets linked objects', async (t) => {
-  const { tmpDir } = (t.context as any)
-  const menuPath = path.join(tmpDir, 'generated/menu.ts')
-  const buttonPath = path.join(tmpDir, 'generated/menu_button.ts')
-
-  // symlink "contentful" to pretend like it's been installed in node_modules
-  const modulesDir = path.join(tmpDir, 'node_modules')
-  await fs.mkdirp(modulesDir)
-  await fs.symlink(path.join(__dirname, '../node_modules/contentful'), path.join(modulesDir, 'contentful'))
-
-  // require the index path to get "ext"
-  require(tmpDir)
-  const { Menu } = require(menuPath)
-  const { MenuButton } = require(buttonPath)
-
-  const menu = new Menu('20bohaVp20MyKSi0YCaw8s', 'menu', {
-    name: 'Side Hamburger',
-    items: [
-      { sys: { type: 'Link', linkType: 'Entry', id: 'DJfq5Q1ZbayWmgYSGuCSa' } },
-      { sys: { type: 'Link', linkType: 'Entry', id: '4FZb5aqcFiUKASguCEIYei' } },
-      { sys: { type: 'Link', linkType: 'Entry', id: '2kwNEGo2kcoIWCOICASIqk' } },
-    ],
-  })
-
-  nockEnvironment()
-  nock('https://cdn.contentful.com')
-    .get('/spaces/testspace/environments/master/entries')
-    .query({
-      'sys.id':  '20bohaVp20MyKSi0YCaw8s',
-      'include': 1,
-      'otherParam': 'test',
+        ],
+      },
     })
-    .replyWithFile(200, path.join(__dirname, 'fixtures/menu.json'))
-  const resolved = await menu.resolve(1, client, { otherParam: 'test' })
 
-  const button = menu.items[0]
-  t.true(button instanceof MenuButton)
-  t.deepEqual(button.text, 'Pricing')
-  t.deepEqual(resolved.fields.items[0].fields.text, 'Pricing')
+    expect(menu.name).toEqual('test name')
+    expect(menu.items).toEqual([null])
+    expect(menu.sys).toEqual({ id: 'test' })
+    expect(menu.fields.name).toEqual('test name')
+  })
+
+  it('Menu creates wrapped classes for resolved links', async () => {
+    
+    const menuPath = path.join(tmpDir, 'generated/menu.ts')
+    const buttonPath = path.join(tmpDir, 'generated/menu_button.ts')
+
+    const { Menu } = require(menuPath)
+    const { MenuButton } = require(buttonPath)
+
+    const menu = new Menu({
+      sys: { id: 'test' },
+      fields: {
+        name: 'test name',
+        items: [
+          {
+            sys: {
+              type: 'Entry',
+              id: 'test button',
+              contentType: {
+                sys: {
+                  id: 'menuButton',
+                },
+              },
+            },
+            fields: {
+              title: 'Button Title',
+            },
+          },
+        ],
+      },
+    })
+
+    const button = menu.items[0]
+    expect(button instanceof MenuButton).toBeTruthy()
+  })
+
+  it('Menu can wrap Contentful.js objects', async () => {
+    
+    const menuPath = path.join(tmpDir, 'generated/menu.ts')
+    const buttonPath = path.join(tmpDir, 'generated/menu_button.ts')
+
+    const { Menu } = require(menuPath)
+    const { MenuButton } = require(buttonPath)
+
+    nockEnvironment()
+    nock('https://cdn.contentful.com')
+      .get('/spaces/testspace/environments/master/entries?sys.id=20bohaVp20MyKSi0YCaw8s')
+      .replyWithFile(200, path.join(__dirname, 'fixtures/menu.json'))
+
+    const menu = new Menu(await client.getEntry<any>('20bohaVp20MyKSi0YCaw8s'))
+    const button = menu.items[0]
+    expect(button instanceof MenuButton).toBeTruthy()
+    expect(button.text).toEqual('Pricing')
+  })
+
+  it('Menu resolve gets linked objects', async () => {
+    
+    const menuPath = path.join(tmpDir, 'generated/menu.ts')
+    const buttonPath = path.join(tmpDir, 'generated/menu_button.ts')
+
+    // symlink "contentful" to pretend like it's been installed in node_modules
+    const modulesDir = path.join(tmpDir, 'node_modules')
+    await fs.mkdirp(modulesDir)
+    await fs.symlink(path.join(__dirname, '../node_modules/contentful'), path.join(modulesDir, 'contentful'))
+
+    // require the index path to get "ext"
+    require(tmpDir)
+    const { Menu } = require(menuPath)
+    const { MenuButton } = require(buttonPath)
+
+    const menu = new Menu('20bohaVp20MyKSi0YCaw8s', 'menu', {
+      name: 'Side Hamburger',
+      items: [
+        { sys: { type: 'Link', linkType: 'Entry', id: 'DJfq5Q1ZbayWmgYSGuCSa' } },
+        { sys: { type: 'Link', linkType: 'Entry', id: '4FZb5aqcFiUKASguCEIYei' } },
+        { sys: { type: 'Link', linkType: 'Entry', id: '2kwNEGo2kcoIWCOICASIqk' } },
+      ],
+    })
+
+    nockEnvironment()
+    nock('https://cdn.contentful.com')
+      .get('/spaces/testspace/environments/master/entries')
+      .query({
+        'sys.id':  '20bohaVp20MyKSi0YCaw8s',
+        'include': 1,
+        'otherParam': 'test',
+      })
+      .replyWithFile(200, path.join(__dirname, 'fixtures/menu.json'))
+    const resolved = await menu.resolve(1, client, { otherParam: 'test' })
+
+    const button = menu.items[0]
+    expect(button instanceof MenuButton).toBeTruthy()
+    expect(button.text).toEqual('Pricing')
+    expect(resolved.fields.items[0].fields.text).toEqual('Pricing')
+  })
 })
 
 function nockEnvironment() {

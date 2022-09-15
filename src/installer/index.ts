@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra'
-import * as globby from 'globby'
+import globby from 'globby'
 import * as path from 'path'
 import defaults from '../defaults'
 

@@ -1,4 +1,3 @@
-import test, { beforeEach, ExecutionContext } from 'ava'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as tmp from 'tmp'
@@ -8,77 +7,81 @@ import { Installer } from './index'
 
 const templateDir = path.join(__dirname, 'templates')
 
-beforeEach(async (t) => {
-  const tmpDir = await (promisify<string>((cb) => tmp.dir(cb))())
+describe('installer', () => {
+  let tmpDir: string
 
-  Object.assign(t.context, { tmpDir })
-  await fs.remove(tmpDir)
-  await fs.mkdirp(tmpDir)
-})
+  beforeEach(async () => {
+    tmpDir = await (promisify<string>((cb) => tmp.dir(cb))())
 
-test('installs templates to empty directory', async (t) => {
-  const { tmpDir } = (t.context as any)
-
-  const installer = new Installer({
-    outputDir: tmpDir,
+    await fs.remove(tmpDir)
+    await fs.mkdirp(tmpDir)
   })
 
-  await installer.install()
+  it('installs templates to empty directory', async () => {
+    
 
-  const templateFiles = ['base.ts', 'index.ts', 'utils.ts', '.gitignore']
+    const installer = new Installer({
+      outputDir: tmpDir,
+    })
 
-  await Promise.all(templateFiles.map(async (file) => {
-    const fullPath = path.join(tmpDir, file)
-    t.true(await fs.pathExists(fullPath), `${fullPath} does not exist`)
-  }))
-  await Promise.all(templateFiles.map(async (file) => {
-    const contents = await fs.readFile(path.join(tmpDir, file))
-    const expected = await fs.readFile(path.join(templateDir, file))
-    t.deepEqual(contents.toString(), expected.toString(), `${file} does not match expected`)
-  }))
-})
+    await installer.install()
 
-test('does not overwrite existing files in the directory', async (t) => {
-  const { tmpDir } = (t.context as any)
+    const templateFiles = ['base.ts', 'index.ts', 'utils.ts', '.gitignore']
 
-  const installer = new Installer({
-    outputDir: tmpDir,
+    await Promise.all(templateFiles.map(async (file) => {
+      const fullPath = path.join(tmpDir, file)
+      expect(await fs.pathExists(fullPath)).toBeTruthy()
+    }))
+    await Promise.all(templateFiles.map(async (file) => {
+      const contents = await fs.readFile(path.join(tmpDir, file))
+      const expected = await fs.readFile(path.join(templateDir, file))
+      expect(contents.toString()).toEqual(expected.toString())
+    }))
   })
 
-  await fs.writeFile(path.join(tmpDir, 'base.ts'), '// test test test')
+  it('does not overwrite existing files in the directory', async () => {
+    
 
-  await installer.install()
+    const installer = new Installer({
+      outputDir: tmpDir,
+    })
 
-  const templateFiles = ['base.ts', 'index.ts', 'utils.ts']
+    await fs.writeFile(path.join(tmpDir, 'base.ts'), '// test test test')
 
-  await Promise.all(templateFiles.map(async (file) => {
-    const fullPath = path.join(tmpDir, file)
-    t.true(await fs.pathExists(fullPath), `${fullPath} does not exist`)
-  }))
+    await installer.install()
 
-  const contents = await fs.readFile(path.join(tmpDir, 'base.ts'))
-  t.deepEqual(contents.toString(), '// test test test')
+    const templateFiles = ['base.ts', 'index.ts', 'utils.ts']
 
-})
+    await Promise.all(templateFiles.map(async (file) => {
+      const fullPath = path.join(tmpDir, file)
+      expect(await fs.pathExists(fullPath)).toBeTruthy()
+    }))
 
-test('does not install any files if index exists', async (t) => {
-  const { tmpDir } = (t.context as any)
+    const contents = await fs.readFile(path.join(tmpDir, 'base.ts'))
+    expect(contents.toString()).toEqual('// test test test')
 
-  const installer = new Installer({
-    outputDir: tmpDir,
   })
 
-  await fs.writeFile(path.join(tmpDir, 'index.ts'), '// test test test')
+  it('does not install any files if index exists', async () => {
+    
 
-  await installer.install()
+    const installer = new Installer({
+      outputDir: tmpDir,
+    })
 
-  const templateFiles = ['base.ts', 'utils.ts']
+    await fs.writeFile(path.join(tmpDir, 'index.ts'), '// test test test')
 
-  await Promise.all(templateFiles.map(async (file) => {
-    const fullPath = path.join(tmpDir, file)
-    t.false(await fs.pathExists(fullPath), `${fullPath} should not exist`)
-  }))
+    await installer.install()
 
-  const contents = await fs.readFile(path.join(tmpDir, 'index.ts'))
-  t.deepEqual(contents.toString(), '// test test test')
+    const templateFiles = ['base.ts', 'utils.ts']
+
+    await Promise.all(templateFiles.map(async (file) => {
+      const fullPath = path.join(tmpDir, file)
+      expect(await fs.pathExists(fullPath)).toBeFalsy()
+    }))
+
+    const contents = await fs.readFile(path.join(tmpDir, 'index.ts'))
+    expect(contents.toString()).toEqual('// test test test')
+  })
+
 })
