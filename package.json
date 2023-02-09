@@ -57,7 +57,7 @@
     "async-toolbox": "^0.4.2",
     "babel-jest": "^29.0.3",
     "chalk": "^2.4.2",
-    "contentful-management": "^5.7.0",
+    "contentful-management": ">=5.7.0",
     "fs-extra": "^7.0.1",
     "globby": "^9.1.0",
     "inflection": "^1.12.0",
