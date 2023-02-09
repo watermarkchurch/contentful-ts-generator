@@ -76,13 +76,12 @@ export class ContentTypeWriter {
         type: 'IEntry<any>',
       }],
       returnType: `entry is ${this.interfaceName}`,
-      bodyText: (writer) => {
-        writer.writeLine('return entry &&')
-          .writeLine('entry.sys &&')
-          .writeLine('entry.sys.contentType &&')
-          .writeLine('entry.sys.contentType.sys &&')
-          .writeLine(`entry.sys.contentType.sys.id == '${contentType.sys.id}'`)
-      },
+    }).setBodyText(writer => {
+      writer.writeLine('return entry &&')
+        .writeLine('entry.sys &&')
+        .writeLine('entry.sys.contentType &&')
+        .writeLine('entry.sys.contentType.sys &&')
+        .writeLine(`entry.sys.contentType.sys.id == '${contentType.sys.id}'`)
     })
 
     const klass = file.addClass({
@@ -115,8 +114,7 @@ export class ContentTypeWriter {
         { parameters: [{ name: 'entry', type: this.interfaceName }] },
         { parameters: [{ name: 'id', type: 'string' }, { name: 'fields', type: this.fieldsName }] },
       ],
-      bodyText: `super(entryOrId, '${contentType.sys.id}', fields)`,
-    })
+    }).setBodyText(`super(entryOrId, '${contentType.sys.id}', fields)`)
   }
 
   public writeField(field: any, fieldsInterface: InterfaceDeclaration) {
@@ -189,15 +187,13 @@ export class ContentTypeWriter {
     klass.addGetAccessor({
       name: fieldId,
       returnType,
-      bodyText: accessorImpl,
-    })
+    }).setBodyText(accessorImpl)
 
     if (underscored != fieldId) {
       klass.addGetAccessor({
         name: underscored,
         returnType,
-        bodyText: accessorImpl,
-      })
+      }).setBodyText(accessorImpl)
     }
   }
 
