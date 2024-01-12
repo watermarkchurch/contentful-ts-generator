@@ -69,8 +69,12 @@ export class SchemaDownloader {
     const env = await this.semaphore.lock<any>(() =>
       space.getEnvironment(this.options.environment))
 
+    // By default, the Contentful API will limit results to 100 items.
+    // To avoid truncated results for environments with >100 content types, 
+    // we set the limit to the maximum allowed by Contentful (1000). 
+    // See: https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/search-parameters/order-with-multiple-parameters 
     const contentTypesResp = await this.semaphore.lock<any>(() =>
-      env.getContentTypes())
+      env.getContentTypes({ limit: 1000 }))
 
     const editorInterfaces = (await Promise.all<any>(
       contentTypesResp.items.map((ct: any) =>
