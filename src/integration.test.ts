@@ -3,7 +3,7 @@ import * as fs from 'fs-extra'
 import nock from 'nock'
 import * as path from 'path'
 import * as tmp from 'tmp'
-import Project from 'ts-morph'
+import {Project} from 'ts-morph'
 import { promisify } from 'util'
 
 import { ContentfulTSGenerator } from './index'
@@ -41,7 +41,7 @@ describe('integration', () => {
     const menuPath = path.join(tmpDir, 'generated/menu.ts')
 
     const project = new Project()
-    const menuFile = project.addExistingSourceFile(menuPath)
+    const menuFile = project.addSourceFileAtPath(menuPath)
 
     expect(menuFile.getClasses().length).toEqual(1)
     expect(menuFile.getClasses()[0].getName()).toEqual('Menu')

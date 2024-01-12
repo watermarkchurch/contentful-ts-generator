@@ -6,6 +6,7 @@ import {
   FunctionDeclarationOverloadStructure,
   Project,
   PropertySignatureStructure,
+  StructureKind,
 } from 'ts-morph'
 
 import { ContentTypeWriter } from './content-type-writer'
@@ -93,6 +94,7 @@ export class ContentfulTSGenerator {
       properties: Object.keys(typeDirectory).map<PropertySignatureStructure>((ct: any) => (
         {
           name: `'${ct}'`,
+          kind: StructureKind.PropertySignature,
           type: `C.${typeDirectory[ct]}`,
         }
       )),
@@ -104,6 +106,7 @@ export class ContentfulTSGenerator {
       properties: Object.keys(classDirectory).map<PropertySignatureStructure>((ct: any) => (
         {
           name: `'${ct}'`,
+          kind: StructureKind.PropertySignature,
           type: `C.${classDirectory[ct]}`,
         }
       )),
@@ -115,6 +118,7 @@ export class ContentfulTSGenerator {
           name: 'entry',
           type: `C.${typeDirectory[ct]}`,
         }],
+        kind: StructureKind.FunctionOverload,
         returnType: `C.${classDirectory[ct]}`,
       }))
 
@@ -124,6 +128,7 @@ export class ContentfulTSGenerator {
         name: 'CT',
         constraint: 'keyof TypeDirectory',
       }],
+      kind: StructureKind.FunctionOverload,
       parameters: [{
         name: 'entry',
         type: 'TypeDirectory[CT]',
@@ -140,20 +145,18 @@ export class ContentfulTSGenerator {
         type: 'IEntry<any>',
       }],
       returnType: 'IEntry<any>',
-      overloads: wrapOverloads,
-      bodyText: (writer) => {
-        writer.writeLine('const id = entry.sys.contentType.sys.id')
-          .writeLine('switch(id) {')
+    }).setBodyText(writer => {
+      writer.writeLine('const id = entry.sys.contentType.sys.id')
+        .writeLine('switch(id) {')
 
-        Object.keys(classDirectory).map((ct) => {
-          writer.writeLine(`case '${ct}':`)
-            .writeLine(`return new C.${classDirectory[ct]}(entry)`)
-        })
-        writer.writeLine('default:')
-        writer.writeLine('throw new Error(\'Unknown content type:\' + id)')
-        writer.writeLine('}')
-      },
-    })
+      Object.keys(classDirectory).map((ct) => {
+        writer.writeLine(`case '${ct}':`)
+          .writeLine(`return new C.${classDirectory[ct]}(entry)`)
+      })
+      writer.writeLine('default:')
+      writer.writeLine('throw new Error(\'Unknown content type:\' + id)')
+      writer.writeLine('}')
+    }).addOverloads(wrapOverloads)
 
     indexFile.formatText(formatSettings)
     await indexFile.save()
