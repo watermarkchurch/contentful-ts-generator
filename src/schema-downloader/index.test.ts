@@ -90,7 +90,7 @@ beforeEach(async () => {
     })
 
   nock('https://api.contentful.com')
-    .get('/spaces/testspace/environments/master/content_types')
+    .get('/spaces/testspace/environments/master/content_types?limit=1000')
     .reply(200, () => {
       return JSON.stringify({
         sys: { type: 'Array' },
